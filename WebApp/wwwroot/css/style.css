@@ -1,0 +1,195 @@
+/*mobile version*/
+
+.page {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial;
+}
+
+/* PERSONALIA STYLING */
+
+.personalia {
+    background-color: #e7e8ec;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 25px;
+}
+
+.personalia-chars{
+    display: flex;
+}
+
+.personalia-chars-list{
+    list-style: circle;
+    position: flex;
+}
+
+/* PROFILE STYLING */
+
+.profile {
+    background-color: #faf8f8;
+    width: 100%;
+    border-radius: 25px;
+    margin: 15px 0px 0px 0px;
+}
+
+.person-logo {
+    border: 4px solid black;
+    border-radius: 50%;
+    margin: 15px 0px 15px 0px;
+    width: 20%;
+    animation: glow 3s ease alternate;
+}
+
+.profile-content {
+    padding: 15px;
+    font-size: 20px;
+}
+
+.profile-content__category-title {
+    color: rgba(39, 140, 39, 0.96);
+}
+
+.profile-content__category--hidden-mobile {
+    display: none;
+}
+
+.profile-content__element {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-content__element--hidden-mobile {
+    display: flex;
+    flex-direction: column;
+    display: none;
+}
+
+.profile-content__title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 2px;
+    margin-top: 6px;
+}
+
+.profile-content__period {
+    display: none;
+}
+
+.profile-content__institute {
+    color: rgba(39, 140, 39, 0.96);
+    margin-top: 0px;
+    font-size: 14px;
+}
+
+.profile-content__level {
+   display: none;
+}
+
+/* GDPR STYLING */
+
+.containerGDPR {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial;
+}
+
+.gdpr-consent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    margin: 5px;
+    border: 2px solid gray;
+    border-radius: 15px 15px 15px 15px;
+    background-color: #f5f5f5;
+}
+
+.gdpr-consent__description{
+    display: flex;
+    justify-content: center;
+}
+
+.gdpr-consent__choice{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.gdpr-consent__button--accept {
+    background-color: #d5f5d5;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid gray;
+}
+
+.gdpr-consent__button--accept:hover {
+    background-color: #c5e3c5;
+}
+
+.gdpr-consent__button--reject {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid gray;
+}
+
+.hide{
+    display: none;
+}
+
+.show{
+    display: block;
+}
+
+/* DESKTOP ONLY STYLING */
+
+@media only screen and (min-width: 800px) {
+
+    .page {
+        flex-direction: row;
+    }
+
+    .person-name{
+        order: -1;
+    }
+
+    .profile-content__category--hidden-mobile{
+        display: flex;
+        flex-direction: column;
+    }
+
+    /*fix: anders als stipje zichtbaar*/
+    .profile-content__category--hidden-mobile hr{
+        width: 100%;
+    }
+
+    .profile-content__element--hidden-mobile {
+        display: flex;
+    }
+
+    .profile-content__element-header{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .profile-content__period {
+        font-size: 12px;
+        color: #5c6166;
+        display: flex;
+    }
+
+    .profile {
+        background-color: #faf8f8;
+        width: 100%;
+        border-radius: 25px;
+        margin: 0px 0px 0px 15px;
+    }
+
+}

@@ -6,6 +6,25 @@
     font-family: Arial;
 }
 
+/*contact pagina styling*/
+
+.contact {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-contactpagina__inputelement {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0px 15px 0px;
+}
+
+.fx-col {
+    flex-direction: column;
+}
+
 /* PERSONALIA STYLING */
 
 .personalia {
@@ -176,25 +195,25 @@
         flex-direction: row;
     }
 
-    .person-name{
+    .person-name {
         order: -1;
     }
 
-    .profile-content__category--hidden-mobile{
+    .profile-content__category--hidden-mobile {
         display: flex;
         flex-direction: column;
     }
 
-    /*fix: anders als stipje zichtbaar*/
-    .profile-content__category--hidden-mobile hr{
-        width: 100%;
-    }
+        /*fix: anders als stipje zichtbaar*/
+        .profile-content__category--hidden-mobile hr {
+            width: 100%;
+        }
 
     .profile-content__element--hidden-mobile {
         display: flex;
     }
 
-    .profile-content__element-header{
+    .profile-content__element-header {
         display: flex;
         justify-content: space-between;
     }
@@ -212,4 +231,7 @@
         margin: 0px 0px 0px 15px;
     }
 
+    .shrink {
+        flex-direction: row;
+    }
 }

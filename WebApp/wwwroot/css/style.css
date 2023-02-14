@@ -17,22 +17,11 @@
     border-radius: 25px;
 }
 
-.personalia-chars{
-    display: flex;
-}
-
-.personalia-chars-list{
-    list-style: circle;
-    position: flex;
-}
-
-/* PROFILE STYLING */
-
-.profile {
-    background-color: #faf8f8;
-    width: 100%;
-    border-radius: 25px;
-    margin: 15px 0px 0px 0px;
+.person-name {
+    font-weight: bold;
+    font-size: 32px;
+    margin-bottom: 2px;
+    margin-top: 6px;
 }
 
 .person-logo {
@@ -41,6 +30,37 @@
     margin: 15px 0px 15px 0px;
     width: 20%;
     animation: glow 3s ease alternate;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1;
+}
+
+.left-column {
+   text-align: right; 
+}
+
+.right-column {
+    
+}
+
+
+/* PROFILE STYLING */
+
+.profile {
+    background-color: #faf8f8;
+    width: 100%;
+    border-radius: 25px;
+    margin: 15px 0px 0px 0px;
 }
 
 .profile-content {

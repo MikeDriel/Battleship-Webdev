@@ -12,6 +12,11 @@ namespace WebApp.Controllers
 			return View();
 		}
 
+		public IActionResult Contact()
+		{
+			return View();
+		}
+
 
 		public static async Task SendEmail()
 		{

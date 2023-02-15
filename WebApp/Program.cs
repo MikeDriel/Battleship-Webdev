@@ -26,6 +26,6 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
-await ContactController.SendEmail();
+//await ContactController.SendEmail();
 
 app.Run();

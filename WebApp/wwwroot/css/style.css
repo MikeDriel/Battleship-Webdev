@@ -148,6 +148,7 @@
     border: 2px solid gray;
     border-radius: 15px 15px 15px 15px;
     background-color: #f5f5f5;
+    z-index: 2;
 }
 
 .gdpr-consent__description{

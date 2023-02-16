@@ -1,9 +1,13 @@
-﻿<div class="page">
+﻿<script src="~/js/validate.js" asp-append-version="true"></script>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+
+<div class="page">
     <section class="contact">
 
         <h1>Contact</h1>
 
-        <form action="" method="post" class="form-contactpagina">
+        <form action="Emailsent" method="post" class="form-contactpagina">
 
             <div class="form-contactpagina__inputelement fx-col">
                 <label for="name">Naam: </label>
@@ -13,14 +17,6 @@
             <div class="form-contactpagina__inputelement fx-col">
                 <label for="email">Email: </label>
                 <input type="email" name="email" id="email">
-            </div>
-
-            <div class="form-contactpagina__inputelement">
-                <fieldset>
-                    <legend>Wil je onze nieuwsbrief ontvangen?</legend>
-                    <label><input type="radio" name="newsletter" value="yes" checked /> Ja, graag!</label>
-                    <label><input type="radio" name="newsletter" value="no" /> Nee, een andere keer</label>
-                </fieldset>
             </div>
 
             <div class="form-contactpagina__inputelement fx-col">
@@ -36,10 +32,19 @@
             <div class="form-contactpagina__inputelement shrink">
                 <input type="submit" value="Verstuur">
             </div>
-
+            
             <div class="form-contactpagina__inputelement shrink">
                 <input type="reset" value="Reset Forum">
             </div>
+
+
+            @*<button class="g-recaptcha form-contactpagina__inputelement fx-col"
+                data-sitekey="6LeZrIckAAAAAMrusyaNZzPhA34sm_iFbAWJefMx"
+                data-callback='onSubmit'
+                data-action='submit'>
+                Verstuur
+            </button>*@
+            
         </form>
 
 

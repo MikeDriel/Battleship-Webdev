@@ -28,6 +28,7 @@ form.addEventListener("submit", (event) => {
 
 });
 
+
 function showError() {
     if (email.validity.valueMissing) {
         // If the field is empty,
@@ -46,3 +47,11 @@ function showError() {
     // Set the styling appropriately
     emailError.className = "error active";
 }
+
+
+
+//<script>
+ //   function onSubmit(token) {
+ //       document.getElementById("demo-form").submit();
+//    }
+//</script>

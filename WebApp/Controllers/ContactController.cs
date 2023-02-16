@@ -27,7 +27,7 @@ namespace WebApp.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				await SendEmail(email.Name, email.EmailSubject, email.EmailAddress, email.EmailBody);
+				await SendEmail(email.Name, email.EmailAddress, email.EmailBody);
 				return View("MailVerstuurd");
 			}
 			else
@@ -36,13 +36,15 @@ namespace WebApp.Controllers
 			}
 		}
 
-		public static async Task SendEmail(string name, string subject, string emailadress, string plainTextContent)
+		public static async Task SendEmail(string name, string emailadress, string plainTextContent_)
 		{
 			var apiKey = "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";
 			var client = new SendGridClient(apiKey);
-			var from = new EmailAddress(emailadress, name);
-			var to = new EmailAddress("s1169004@student.windesheim.nl", "Mike");
-			var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
+			var from = new EmailAddress("s1169004@student.windesheim.nl", "s1169004@student.windesheim.nl");
+			var subject = "Het doet mij pijn";
+			var to = new EmailAddress("s1169004@student.windesheim.nl", "s1169004@student.windesheim.nl");
+			var plainTextContent = $"{name}, {emailadress}, {plainTextContent_}";
+			var htmlContent = $"{name}, {emailadress}, {plainTextContent_}";
 			var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
 			var response = await client.SendEmailAsync(msg);
 		}

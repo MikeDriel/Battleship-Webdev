@@ -6,7 +6,8 @@ namespace WebApp.Controllers
 {
 	public class HomeController : Controller
 	{
-		private readonly ILogger<HomeController> _logger;
+        private const string PageViews = "PageViews";
+        private readonly ILogger<HomeController> _logger;
 
 		public HomeController(ILogger<HomeController> logger)
 		{
@@ -15,6 +16,7 @@ namespace WebApp.Controllers
 
 		public IActionResult Index()
 		{
+			UpdatePageViewCookie();
 			return View();
 		}
 
@@ -33,5 +35,21 @@ namespace WebApp.Controllers
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
-	}
+
+        public void UpdatePageViewCookie()
+        {
+            var currentCookieValue = Request.Cookies[PageViews];
+
+            if (currentCookieValue == null)
+            {
+                Response.Cookies.Append(PageViews, "1");
+            }
+            else
+            {
+                var newCookieValue = short.Parse(currentCookieValue) + 1;
+
+                Response.Cookies.Append(PageViews, newCookieValue.ToString());
+            }
+        }
+    }
 }

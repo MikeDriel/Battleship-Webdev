@@ -1,9 +1,15 @@
-using WebApp.Controllers;
+using WebApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Recaptcha
+builder.Services.AddHttpClient<ReCaptcha>(client =>
+{
+    client.BaseAddress = new Uri("https://www.google.com/recaptcha/api/siteverify");
+});
 
 var app = builder.Build();
 
@@ -25,7 +31,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
-
-//await ContactController.SendEmail();
 
 app.Run();

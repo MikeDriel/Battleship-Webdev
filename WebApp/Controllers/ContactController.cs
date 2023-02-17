@@ -7,10 +7,12 @@ namespace WebApp.Controllers
 {
 	public class ContactController : Controller
 	{
-		public IActionResult Index()
-		{
-			return View();
-		}
+        private readonly ReCaptcha _captcha;
+
+        public ContactController(ReCaptcha captcha)
+        {
+            _captcha = captcha;
+        }
 
 		public IActionResult Contact()
 		{
@@ -27,7 +29,13 @@ namespace WebApp.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				await SendEmail(email.Name, email.EmailAddress, email.EmailBody);
+				//Captcha
+                if (!Request.Form.ContainsKey("g-recaptcha-response")) return View("Contact", this);
+                var captcha = Request.Form["g-recaptcha-response"].ToString();
+                if (!await _captcha.IsValid(captcha)) return View("Contact", this);
+
+				//Send mail
+                await SendEmail(email.Name, email.EmailAddress, email.EmailBody);
 				return View("MailVerstuurd");
 			}
 			else
@@ -41,7 +49,7 @@ namespace WebApp.Controllers
 			var apiKey = "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";
 			var client = new SendGridClient(apiKey);
 			var from = new EmailAddress("s1169004@student.windesheim.nl", "s1169004@student.windesheim.nl");
-			var subject = "Het doet mij pijn";
+			var subject = $"Contact formulier {name}";
 			var to = new EmailAddress("s1169004@student.windesheim.nl", "s1169004@student.windesheim.nl");
 			var plainTextContent = $"{name}, {emailadress}, {plainTextContent_}";
 			var htmlContent = $"{name}, {emailadress}, {plainTextContent_}";

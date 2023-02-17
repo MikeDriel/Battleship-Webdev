@@ -6,6 +6,16 @@
     font-family: Arial;
 }
 
+/*contact Captcha*/
+
+.captchadiv {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
 /*contact pagina styling*/
 
 .contact {
@@ -229,9 +239,5 @@
         width: 100%;
         border-radius: 25px;
         margin: 0px 0px 0px 15px;
-    }
-
-    .shrink {
-        flex-direction: row;
     }
 }

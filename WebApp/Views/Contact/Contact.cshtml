@@ -1,13 +1,23 @@
-﻿<script src="~/js/validate.js" asp-append-version="true"></script>
-
-<script src="https://www.google.com/recaptcha/api.js"></script>
+﻿<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script>
+    async function onSubmit(token) {
+        console.log(token);
+        const url = "https://www.google.com/recaptcha/api/siteverify?secret=6Ld35o0kAAAAAGrx6bhs54NsNqblS-PcklJjWxRo&response=" + token;
+        const APIcall = await fetch(url, {
+            method: 'post'
+        });
+        if (APIcall.ok) {
+            document.getElementById("contactform").submit();
+        }
+    }
+</script>
 
 <div class="page">
     <section class="contact">
 
         <h1>Contact</h1>
 
-        <form action="Emailsent" method="post" class="form-contactpagina">
+        <form action="Emailsent" method="post" class="form-contactpagina" id="contactform" name="contactform">
 
             <div class="form-contactpagina__inputelement fx-col">
                 <label for="name">Naam: </label>
@@ -21,27 +31,25 @@
 
             <div class="form-contactpagina__inputelement fx-col">
                 <label for="EmailBody">bericht: </label>
-                <input type="text" name="EmailBody" id="EmailBody">
+                <textarea id="EmailBody" class="messagebox" rows="4" cols="50" name="EmailBody" maxlength="600" required></textarea>
             </div>
 
-            <div class="form-contactpagina__inputelement shrink">
+            <div class="form-contactpagina__inputelement fx-col">
                 <input type="submit" value="Verstuur">
             </div>
             
-            <div class="form-contactpagina__inputelement shrink">
+            <div class="form-contactpagina__inputelement fx-col">
                 <input type="reset" value="Reset Forum">
             </div>
 
-
-            @*<button class="g-recaptcha form-contactpagina__inputelement fx-col"
-                data-sitekey="6LeZrIckAAAAAMrusyaNZzPhA34sm_iFbAWJefMx"
-                data-callback='onSubmit'
-                data-action='submit'>
-                Verstuur
-            </button>*@
+            <div class="captchadiv">
+                <div class="g-recaptcha" data-sitekey="6Ld35o0kAAAAAFY0chYR7irrr_6BTuA7xgmZJtg4"></div>
+            </div>
             
         </form>
 
 
     </section>
 </div>
+
+<script src="~/js/validate.js" asp-append-version="true"></script>

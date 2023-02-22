@@ -32,16 +32,18 @@ namespace WebApp.Controllers
 				//Captcha
                 if (!Request.Form.ContainsKey("g-recaptcha-response")) return View("Contact", this);
                 var captcha = Request.Form["g-recaptcha-response"].ToString();
-                if (!await _captcha.IsValid(captcha)) return View("Contact", this);
-
-				//Send mail
-                await SendEmail(email.Name, email.EmailAddress, email.EmailBody);
-				return View("MailVerstuurd");
+				if (!await _captcha.IsValid(captcha))
+				{
+					return View("MailNietVerstuurd");
+				}
+				else
+				{
+					//Send mail
+					await SendEmail(email.Name, email.EmailAddress, email.EmailBody);
+					return View("MailVerstuurd");
+				}
 			}
-			else
-			{
-				return View("MailNietVerstuurd");
-			}
+			return View("Contact", this);
 		}
 
 		public static async Task SendEmail(string name, string emailadress, string plainTextContent_)

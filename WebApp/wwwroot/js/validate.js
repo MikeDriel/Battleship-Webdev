@@ -47,11 +47,3 @@ function showError() {
     // Set the styling appropriately
     emailError.className = "error active";
 }
-
-
-
-//<script>
- //   function onSubmit(token) {
- //       document.getElementById("demo-form").submit();
-//    }
-//</script>

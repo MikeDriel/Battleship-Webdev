@@ -5,6 +5,75 @@
     flex-direction: column;
     font-family: Arial;
     color: white;
+    background: #16202c;
+}
+
+/* BATTLESHIP */
+
+body {
+    background: #16202c;
+}
+
+.playfield {
+    display: flex;
+    flex-direction: row;
+    background: #0d161f;
+}
+
+.messageArea {
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    color: #f4f8ff;
+    font-family: "Fascinate Inline";
+    font-size: 25px;
+}
+
+.shooter {
+    background: #0a1017;
+}
+
+.ownboats {
+    margin-right: 10%;
+    background: #0b1219;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 3px;
+}
+
+td {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border: 2px solid #152C59;
+}
+
+    td:hover {
+        background: #538daa;
+    }
+
+    td div {
+        width: 70px;
+        height: 70px;
+    }
+
+.numbers {
+    text-align: center;
+    font-size: 20px;
+    font-family: Arial;
+    color: #f4f8ff;
+    height: 40px;
+    width: 40px;
+}
+
+.letters {
+    font-size: 20px;
+    font-family: Arial;
+    color: #f4f8ff;
+    height: 40px;
+    width: 40px;
 }
 
 /*contact Captcha*/
@@ -240,74 +309,5 @@
         width: 100%;
         border-radius: 25px;
         margin: 0px 0px 0px 15px;
-    }
-
-
-    /* BATTLESHIP */
-
-    body {
-        background: #16202c;
-    }
-
-    .playfield {
-        display: flex;
-        flex-direction: row;
-        background: #0d161f;
-    }
-
-    .messageArea {
-        width: 100%;
-        text-align: center;
-        margin-top: 5px;
-        color: #f4f8ff;
-        font-family: "Fascinate Inline";
-        font-size: 25px;
-    }
-
-    .shooter {
-        background: #0a1017;
-    }
-
-    .ownboats {
-        margin-right: 10%;
-        background: #0b1219;
-    }
-
-    table {
-        border-collapse: separate;
-        border-spacing: 3px;
-    }
-
-    td {
-        position: relative;
-        width: 70px;
-        height: 70px;
-        border: 2px solid #152C59;
-    }
-
-        td:hover {
-            background: #538daa;
-        }
-
-        td div {
-            width: 70px;
-            height: 70px;
-        }
-
-    .numbers {
-        text-align: center;
-        font-size: 20px;
-        font-family: Arial;
-        color: #f4f8ff;
-        height: 40px;
-        width: 40px;
-    }
-
-    .letters {
-        font-size: 20px;
-        font-family: Arial;
-        color: #f4f8ff;
-        height: 40px;
-        width: 40px;
     }
 }

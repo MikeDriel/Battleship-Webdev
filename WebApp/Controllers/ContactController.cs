@@ -14,12 +14,7 @@ namespace WebApp.Controllers
             _captcha = captcha;
         }
 
-		public IActionResult Contact()
-		{
-			return View();
-		}
-
-		public IActionResult MailVerstuurd()
+		public IActionResult Index()
 		{
 			return View();
 		}
@@ -43,8 +38,9 @@ namespace WebApp.Controllers
 					return View("MailVerstuurd");
 				}
 			}
-			return View("Contact", this);
-		}
+			return Index();
+
+        }
 
 		public static async Task SendEmail(string name, string emailadress, string plainTextContent_)
 		{

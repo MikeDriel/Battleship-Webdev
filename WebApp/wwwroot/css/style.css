@@ -17,7 +17,6 @@ body {
 .playfield {
     display: flex;
     flex-direction: row;
-    background: #0d161f;
     justify-content: center;
     align-items: center;
 }

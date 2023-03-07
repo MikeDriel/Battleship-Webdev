@@ -68,8 +68,7 @@ td {
         flex-direction: column;
     }
 
-    .battlefield {
-        background: #0a1017;
+    .attack{
         display: none;
     }
 }

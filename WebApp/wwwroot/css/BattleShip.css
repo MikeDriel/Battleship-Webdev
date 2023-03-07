@@ -1,0 +1,75 @@
+﻿/* BATTLESHIP */
+
+body {
+    background: #16202c;
+}
+
+.playfield {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    background-color: #0a1017
+}
+
+.messageArea {
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    color: #f4f8ff;
+    font-family: "Fascinate Inline";
+    font-size: 25px;
+}
+
+.battlefield {
+    background: #0a1017;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.defence {
+}
+
+.attack {
+}
+
+    .attack:hover {
+        background: #538daa;
+    }
+
+td {
+    position: relative;
+    width: 10vh;
+    height: 10vh;
+    border: 2px solid #1d2fff;
+}
+
+.button {
+    display: inline-block;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+    .button:hover {
+        background-color: #3e8e41;
+    }
+
+@media only screen and (max-width:576px) {
+
+    .playfield {
+        flex-direction: column;
+    }
+
+    .battlefield {
+        background: #0a1017;
+        display: none;
+    }
+}

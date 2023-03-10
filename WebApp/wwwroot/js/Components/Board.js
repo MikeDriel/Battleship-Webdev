@@ -1,4 +1,4 @@
-import Cell from "./Cell";
+import Cell from "./Cell.js";
 
 class Board extends HTMLElement {
 
@@ -39,7 +39,7 @@ class Board extends HTMLElement {
             let row = document.createElement('tr');
             for (var j = 0; j < this.state.board[i].length; j++) {
                 const data = this.state.board[i][j];
-                let cell = document.createElement(Cell);
+                let cell = document.createElement('board-cell');
                 cell.id = `${i}-${j}`;
                 cell.data = data;
                 row.appendChild(cell);

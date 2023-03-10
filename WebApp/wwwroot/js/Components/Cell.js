@@ -37,7 +37,7 @@ class Cell extends HTMLElement {
 
     CreateCell() {
         let cell = document.createElement('td');
-        cell.id = `${this.state.x}-${this.state.y}`;
+        cell.id = this.getAttribute('id');
         cell.innerText = this.state.data;
         cell.style.backgroundColor = this.state.color;
         this.shadowRoot.appendChild(cell);
@@ -53,6 +53,6 @@ class Cell extends HTMLElement {
 
 }
 
-// customElements.define('board-cell', Cell);
+customElements.define('board-cell', Cell);
 
 export default Cell;

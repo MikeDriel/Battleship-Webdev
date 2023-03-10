@@ -1,3 +1,5 @@
+import Cell from "./Cell";
+
 class Board extends HTMLElement {
 
     shadowRoot;
@@ -12,7 +14,7 @@ class Board extends HTMLElement {
         this.state = {
             board: [
 
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -37,9 +39,9 @@ class Board extends HTMLElement {
             let row = document.createElement('tr');
             for (var j = 0; j < this.state.board[i].length; j++) {
                 const data = this.state.board[i][j];
-                let cell = document.createElement('td');
+                let cell = document.createElement(Cell);
                 cell.id = `${i}-${j}`;
-                cell.innerText = data;
+                cell.data = data;
                 row.appendChild(cell);
             }
             this.container.appendChild(row);

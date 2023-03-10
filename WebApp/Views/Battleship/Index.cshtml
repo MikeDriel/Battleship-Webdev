@@ -6,12 +6,12 @@
     <div class="playfield">
         <div class="battlefield" id="defence">
             <table>
-                @for (int i = 0; i < 7; i++)
+                @for (int i = 0; i < 10; i++)
                 {
                     <tr>
-                        @for (int j = 0; j < 7; j++)
+                        @for (int j = 0; j < 10; j++)
                         {
-                            <td><div id="@i@j"></div></td>
+                            <td><div id="@i-@j"></div></td>
                         }
                     </tr>
                 }
@@ -19,22 +19,13 @@
         </div>
 
         <div class="battlefield" id="attack">
-            <table>
-                @for (int i = 0; i < 7; i++)
-                {
-                    <tr>
-                        @for (int j = 0; j < 7; j++)
-                        {
-                            <td class="attack"><div id="@i@j"></div></td>
-                        }
-                    </tr>
-                }
-            </table>
+               <boat-board> TEST </boat-board>
         </div>
     </div>
 </div>
 
 <link rel="stylesheet" href="~/css/BattleShip.css" asp-append-version="true" />
+<script defer type="module" src="/js/Components/Board.js"></script>
 <script>
     document.getElementById("remove-container").classList.remove("container")
 </script>

@@ -29,20 +29,55 @@ table {
 }
 
 .defence {
+
+    
 }
 
-.attack {
+.defence:hover{
+    
 }
 
-    .attack:hover {
-        background: #538daa;
-    }
+.attack {}
+
+.attack:hover {
+    background-color: #538daa;
+}
+
+.black {
+    background-color: black;
+}
+
+.black:hover {
+    background-color: #538daa;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
+
+.blue {
+    background-color: blue;
+}
+
+board-cell {
+    height: 100%;
+    width: 100%;
+}
+
+tr {
+    display: flex;
+}
 
 td {
     position: relative;
     width: 7vh;
     height: 7vh;
     border: 2px solid #1d2fff;
+    padding: 0%;
 }
 
 .button {
@@ -58,9 +93,9 @@ td {
     cursor: pointer;
 }
 
-    .button:hover {
-        background-color: #3e8e41;
-    }
+.button:hover {
+    background-color: #3e8e41;
+}
 
 @media only screen and (max-width:576px) {
 
@@ -68,7 +103,7 @@ td {
         flex-direction: column;
     }
 
-    .attack{
+    .attack {
         display: none;
     }
 }

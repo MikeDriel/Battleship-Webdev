@@ -16,16 +16,14 @@ class Board extends HTMLElement {
 
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 2, 0, 0, 0, 0, 3, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 3, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0, 2, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
 
             ]
         };
@@ -38,10 +36,10 @@ class Board extends HTMLElement {
         for (var i = 0; i < this.state.board.length; i++) {
             let row = document.createElement('tr');
             for (var j = 0; j < this.state.board[i].length; j++) {
-                const data = this.state.board[i][j];
+
                 let cell = document.createElement('board-cell');
-                cell.id = `${i}-${j}`;
-                cell.data = data;
+                cell.setAttribute('id', `${i}-${j}`);
+                cell.setAttribute('data',  this.state.board[i][j]);
                 row.appendChild(cell);
             }
             this.container.appendChild(row);

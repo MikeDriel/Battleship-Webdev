@@ -4,22 +4,12 @@
 
 <div class="page">
     <div class="playfield">
-        <div class="battlefield" id="defence">
-            <table>
-                @for (int i = 0; i < 10; i++)
-                {
-                    <tr>
-                        @for (int j = 0; j < 10; j++)
-                        {
-                            <td><div id="@i-@j"></div></td>
-                        }
-                    </tr>
-                }
-            </table>
+        <div class="battlefield" id="defence" style="pointer-events:none;">
+            <boat-board></boat-board>
         </div>
 
         <div class="battlefield" id="attack">
-               <boat-board></boat-board>
+            <boat-board></boat-board>
         </div>
     </div>
 </div>

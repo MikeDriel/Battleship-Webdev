@@ -4,45 +4,43 @@ class Cell extends HTMLElement {
     templateId = 'board-template';
     elementId = 'board';
 
-
     constructor() {
         super(); // always call super() first in the ctor.
         this.shadowRoot = this.attachShadow({ mode: 'open' });
         this.container = document.createElement('table');
-        this.state = {
-            color: 'black'
-        }
-        this.GetColor();
+ 
+        //this.CreateCell();
+        //this.attachStyling();
+    }
+
+    connectedCallback() {
         this.CreateCell();
         this.attachStyling();
     }
 
     GetColor() {
-        switch (this.getAttribute('data')) {
+        switch (parseInt(this.getAttribute('data'))) {
             default:
             case 0:
-                this.state.color = "black";
-                break;
+                return "black"; // black
             case 1:
-                this.state.color = "blue";
-                break;
+                return "blue"; // blue
             case 2:
-                this.state.color = "red";
-                break;
+                return "red"; // red
             case 3:
-                this.state.color = "green";
-                break;
+                return "green"; // green
         }
     }
-
+    
     CreateCell() {
         let cell = document.createElement('td');
         cell.id = this.getAttribute('id');
-        cell.innerText = this.state.data;
-        cell.style.backgroundColor = this.state.color;
+        //cell.innerText = this.getAttribute('data');
+        //cell.style.background = this.GetColor();
+
+        cell.classList.add(this.GetColor());
         this.shadowRoot.appendChild(cell);
     }
-
 
     attachStyling() {
         const linkElem = document.createElement("link");

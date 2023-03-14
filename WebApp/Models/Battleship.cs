@@ -1,51 +1,82 @@
 ﻿namespace WebApp.Models
 {
-	public class Battleship
-	{
-		Playboard Playboard;
+    public class Game
+    {
+        private List<Player> _players = new List<Player>();
+        public string GameId { get; }
+        public bool IsGameOver { get; internal set; }
 
-		public Battleship(Player player, int length)
-		{
-			this.Playboard = new Playboard(player, length);
-		}
-	}
-
-	public class Playboard
-	{
-		public int[,] Size { get; set; }
-		public Player Player { get; set; }
-		public IDictionary<int, int> Hit { get; set; }
-        public IDictionary<int, int> Boats { get; set; }
-        public Playboard(Player player, int length)
-		{
-            Size = new int[length, length];
-            this.Player = Player;
-            Hit = new Dictionary<int, int>();
-            Boats = new Dictionary<int, int>();
+        public Game(string gameId)
+        {
+            GameId = gameId;
         }
-		
-		public void FillBoats()
-		{
-			
-		}
-	}
-	
-	public class Player
-	{
-		public int PlayerId;
-	}
 
-	public class Boat
-	{
-		public int Id { get; set; }
-		public int Size { get; set; }
+        public void AddPlayer(string playerName, string connectionId)
+        {
+            // Create a new player object and add it to the list of players
+            var player = new Player(playerName, connectionId);
+            _players.Add(player);
+        }
+
+        //TODO
+        internal object GetPlayerName(string connectionId)
+        {
+            throw new NotImplementedException();
+        }
+        //TODO
+        internal object Shoot(object playerName, int cellId)
+        {
+            throw new NotImplementedException();
+        }
+        //TODO
+        internal CancellationToken GetWinner()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PlayerManager
+    {
+        private List<Player> _players = new List<Player>();
+
+        public void AddPlayer(Player player)
+        {
+            _players.Add(player);
+        }
+
+        public Player GetPlayer(string connectionId)
+        {
+            return _players.FirstOrDefault(p => p.ConnectionId == connectionId);
+        }
+    }
+
+    public class Player
+    {
+        public string Name { get; }
+        public string ConnectionId { get; }
+        public int Wins { get; set; }
+        public int Losses { get; set; }
+
+        public Player(string name, string connectionId)
+        {
+            Name = name;
+            ConnectionId = connectionId;
+        }
+    }
 
 
-		Boat(int Coordinates, int BoatId)
-		{
-			this.Id = Id;
-			this.Size = Size;
-		}
+    public class GameManager
+    {
+        private List<Game> _games = new List<Game>();
 
-	}
+        public Game GetGame(string gameId)
+        {
+            return _games.FirstOrDefault(g => g.GameId == gameId);
+        }
+
+        public void AddGame(Game game)
+        {
+            _games.Add(game);
+        }
+    }
 }

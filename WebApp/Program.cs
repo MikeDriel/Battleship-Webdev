@@ -15,6 +15,9 @@ builder.Services.AddDefaultIdentity<WebAppUser>(options => options.SignIn.Requir
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
+//Gamemanager
+builder.Services.AddSingleton<GameManager>();
+
 //Recaptcha
 builder.Services.AddHttpClient<ReCaptcha>(client =>
 {

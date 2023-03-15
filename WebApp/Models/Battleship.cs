@@ -33,6 +33,11 @@
         {
             throw new NotImplementedException();
         }
+
+        internal void UpdateBoard(string playerName, int[][] boardState)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class PlayerManager

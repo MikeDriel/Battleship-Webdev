@@ -94,5 +94,24 @@ namespace WebApp.Hubs
                 await Clients.Caller.SendAsync("ShootError", "Game not found");
             }
         }
+
+        public async Task UpdateBoard(string gameId, string playerName, int[][] boardState)
+        {
+            // Get the game from the list of active games
+            var game = _gameManager.GetGame(gameId);
+
+            if (game != null)
+            {
+                // Update the board state for the player
+                game.UpdateBoard(playerName, boardState);
+
+                // Notify all players in the game that the board state has been updated
+                await Clients.Group(gameId).SendAsync("BoardUpdated", playerName, boardState);
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("UpdateBoardError", "Game not found");
+            }
+        }
     }
 }

@@ -1,32 +1,33 @@
 import Cell from "./Cell.js";
 
-class Board extends HTMLElement {
+class BaseBoard extends HTMLElement {
 
     shadowRoot;
     templateId = 'board-template';
     elementId = 'board';
 
 
-    constructor() {
+    constructor(state = null) {
         super(); // always call super() first in the ctor.
         this.shadowRoot = this.attachShadow({ mode: 'open' });
         this.container = document.createElement('table');
-        this.state = {
+        this.state = state || {
             board: [
 
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 2, 0, 0, 0, 0, 3, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 3, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 2, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 
             ]
         };
+
         this.GenerateBoard();
         this.attachStyling();
     }
@@ -58,6 +59,21 @@ class Board extends HTMLElement {
 
 }
 
-customElements.define('boat-board', Board);
+class Player1Board extends BaseBoard {
+    constructor(state = null) {
+        super(state);
+    }
+}
 
-export default Board;
+class Player2Board extends BaseBoard {
+    constructor(state = null) {
+        super(state);
+    }
+}
+
+
+//customElements.define('boat-board', BaseBoard);
+customElements.define('player1-board', Player1Board);
+customElements.define('player2-board', Player2Board);
+
+export default BaseBoard;

@@ -5,11 +5,11 @@
 <div class="page">
     <div class="playfield">
         <div class="battlefield" id="defence" style="pointer-events:none;">
-            <boat-board></boat-board>
+            <player1-board></player1-board>
         </div>
 
         <div class="battlefield" id="attack">
-            <boat-board></boat-board>
+            <player2-board></player2-board>
         </div>
     </div>
 </div>
@@ -17,6 +17,8 @@
 <link rel="stylesheet" href="~/css/BattleShip.css" asp-append-version="true" />
 <script defer type="module" src="/js/Components/Board.js"></script>
 <script defer type="module" src="/js/Components/Cell.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script defer type="module" src="~/js/Battleship/Battleship.js"></script>
 <script>
     document.getElementById("remove-container").classList.remove("container")
 </script>

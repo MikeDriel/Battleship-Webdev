@@ -8,11 +8,15 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    text-align: center;
 }
 
+.lobbyBox {
+    display: flex;
+    justify-content: center;
+}
 
 @media only screen and (max-width:576px) {
-
     .playfield {
         flex-direction: column;
     }

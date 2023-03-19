@@ -36,6 +36,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseWebSockets();
 app.UseRateLimiter();
 
 app.UseRouting();
@@ -46,7 +47,7 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapHub<BattleShipHub>("/chatHub");
+app.MapHub<BattleShipHub>("/BattleShipHub");
 
 app.MapRazorPages();
 

@@ -2,23 +2,40 @@
     ViewData["Title"] = "Battleship";
 }
 
-<div class="page">
-    <div class="playfield">
-        <div class="battlefield" id="defence" style="pointer-events:none;">
-            <player1-board></player1-board>
+<div class="page text-white" id="page">
+    <div class="lobbyBox">
+        <div class="lobby" id="lobbyscreen">
+            <h1>Lobby</h1>
+            <p>RoomCode</p>
+            <input id="roomCode" />
+            <p>playerName</p>
+            <input id="playerName" />
+            <button id="createButton">  Create game  </button>
+            <button id="joinButton">  Join game  </button>
         </div>
+    </div>
+    <div>
+        <div class="playfield" id="playfield">
+            <p id="player1name"> player1 </p>
+            <p id="player2name"> player2 </p>
+            <p id="gameRoomCode"> testiD </p>
+            <div class="battlefield" id="defence" style="pointer-events:none;">
+                <player1-board></player1-board>
+            </div>
 
-        <div class="battlefield" id="attack">
-            <player2-board></player2-board>
+            <div class="battlefield" id="attack">
+                <player2-board></player2-board>
+            </div>
         </div>
     </div>
 </div>
 
 <link rel="stylesheet" href="~/css/BattleShip.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Lobby.css" asp-append-version="true" />
 <script defer type="module" src="/js/Components/Board.js"></script>
 <script defer type="module" src="/js/Components/Cell.js"></script>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script defer type="module" src="~/js/Battleship/Battleship.js"></script>
+<script src="~/js/Battleship/Battleship.js"></script>
 <script>
     document.getElementById("remove-container").classList.remove("container")
 </script>

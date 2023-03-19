@@ -48,7 +48,21 @@ class BaseBoard extends HTMLElement {
         this.shadowRoot.appendChild(this.container);
     }
 
+    set boardState(newState) {
+        this.state.board = newState;
+        this.updateBoard();
+    }
 
+    updateBoard() {
+        for (let i = 0; i < this.state.board.length; i++) {
+            for (let j = 0; j < this.state.board[i].length; j++) {
+                const cell = this.shadowRoot.querySelector(`${i}-${j}`);
+                if (cell) {
+                    cell.setAttribute('data', this.state.board[i][j]);
+                }
+            }
+        }
+    }
 
     attachStyling() {
         const linkElem = document.createElement("link");

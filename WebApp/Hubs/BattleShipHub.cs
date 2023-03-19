@@ -50,8 +50,7 @@ namespace WebApp.Hubs
                 // Notify all players in the game that a new player has joined
                 await Clients.Group(gameId).SendAsync("PlayerJoined", playerName, gameId, playerCount);
 
-
-                //await SyncGameData(gameId);
+                await SyncGameData(gameId, game.PlayerCount);
 
 
                 if (game.PlayerCount == 2)

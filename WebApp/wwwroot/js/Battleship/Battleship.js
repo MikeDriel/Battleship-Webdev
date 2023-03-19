@@ -24,12 +24,8 @@ connection.on("GameCreated", (gameId) => {
     document.getElementById("lobbyscreen").remove();
     document.getElementById("playfield").classList.add("visible");
 
-    // Sync game data after game creation
-    connection.invoke("SyncGameData", gameId, 1).then(() => {
-        console.log("Game data synced");
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
+    document.getElementById("gameRoomCode").innerHTML = gameId;
+    document.getElementById("player1name").innerHTML = document.getElementById("playerName").value;
 });
 
 
@@ -39,13 +35,6 @@ connection.on("PlayerJoined", (playerName, gameId) => {
     // Update the UI to show that a player has joined the game
     document.getElementById("lobbyscreen").remove();
     document.getElementById("playfield").classList.add("visible");
-
-    // Sync game data after game creation
-    connection.invoke("SyncGameData", gameId, 2).then(() => {
-        console.log("Game data synced");
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
 
     console.log(`${playerName} has joined the game with ID: ${gameId}`);
 });
@@ -63,7 +52,6 @@ connection.on("GameOver", (winnerName) => {
 });
 
 connection.on("GameDataSynced", (player1Name, player2Name, gameId) => {
-    debugger;
     document.getElementById("player1name").innerHTML = player1Name;
     document.getElementById("player2name").innerHTML = player2Name;
     document.getElementById("gameRoomCode").innerHTML = gameId;

@@ -47,13 +47,8 @@ namespace WebApp.Hubs
 
                 // Get the board state for the player
                 var boardState = game.GetBoardStateForPlayer(Context.ConnectionId);
-                bool isCurrentPlayer = boardState.IsCurrentPlayer;
-                int[][] board = boardState.Board;
 
                 Context.Items["RoomCode"]= gameId;
-
-                // Send the initial board state to the player
-                await Clients.Caller.SendAsync("InitialBoardState", boardState);
 
                 int playerCount = game.PlayerCount;
 
@@ -69,8 +64,7 @@ namespace WebApp.Hubs
                     // Start the game
                     game.StartGame();
 
-                    await Clients.Group(gameId).SendAsync("InitialBoardState", game.GetBoardStateForPlayer(game.Player1.ConnectionId));
-                    await Clients.Group(gameId).SendAsync("InitialBoardState", game.GetBoardStateForPlayer(game.Player2.ConnectionId));
+                    await Clients.Group(gameId).SendAsync("InitialBoardState", boardState);
 
                     // Notify all players in the game about the game start
                     await Clients.Group(gameId).SendAsync("GameStarted", game.Player1.Name, game.Player2.Name);

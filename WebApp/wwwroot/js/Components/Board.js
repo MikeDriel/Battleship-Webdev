@@ -65,13 +65,9 @@ class BaseBoard extends HTMLElement {
         connection.invoke("Shoot", col, row).catch(err => console.error(err.toString()));
     }
 
+    updateBoard(newState) {
+    this.state.board = newState;
 
-    set boardState(newState) {
-        this.state.board = newState;
-        this.updateBoard();
-    }
-
-    updateBoard() {
         for (let i = 0; i < this.state.board.length; i++) {
             for (let j = 0; j < this.state.board[i].length; j++) {
                 const cell = this.shadowRoot.querySelector(`${i}-${j}`);
@@ -81,12 +77,6 @@ class BaseBoard extends HTMLElement {
             }
         }
     }
-
-    updateCell(row, col, cellValue) {
-        const cell = this.shadowRoot.getElementById(`${row}-${col}`);
-        cell.setAttribute('data', cellValue);
-    }
-
 
     attachStyling() {
         const linkElem = document.createElement("link");

@@ -29,25 +29,15 @@ connection.on("PlayerJoined", (playerName, gameId) => {
 });
 
 connection.on("InitialBoardState", (boardState) => {
-    // Update the player's board with the received board state
-    updatePlayerBoard(boardState);
-});
 
-// Function to update the player's board with the received board state
-function updatePlayerBoard(boardData) {
-    // Get the appropriate board instance based on the IsCurrentPlayer property
-    const playerBoard = boardData.IsCurrentPlayer
+    let playerBoard = boardState.IsCurrentPlayer
         ? document.querySelector("player1-board")
         : document.querySelector("player2-board");
 
-    // Update the board cells with the received board state
-    for (let row = 0; row < boardData.Board.length; row++) {
-        for (let col = 0; col < boardData.Board[row].length; col++) {
-            // Update the cell at (row, col) with the value from boardData.Board
-            playerBoard.updateCell(row, col, boardData.Board[row][col]);
-        }
-    }
-}
+
+    playerBoard.updateBoard(boardState.board);
+
+});
 
 
 // Listen for the "GameStarted" event from the hub

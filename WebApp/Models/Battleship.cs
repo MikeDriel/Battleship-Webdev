@@ -33,9 +33,9 @@ namespace WebApp.Models
 
         private int[][] GenerateInitialBoard()
         {
-            int[] shipSizes = new int[] { 5, 4, 3, 3, 2 }; // Sizes of the ships to place on the board
+            int[] shipSizes = new int[] { 5, 4, 3, 3, 2}; // Sizes of the ships to place on the board
             int[][] board = new int[10][];
-
+            
             // Initialize the board with empty cells
             for (int i = 0; i < 10; i++)
             {
@@ -44,23 +44,43 @@ namespace WebApp.Models
 
             Random random = new Random();
 
+            int j = 0;
+            int row = 0;
+            
             foreach (int shipSize in shipSizes)
             {
-                bool placed = false;
+                int col = 0;
 
-                while (!placed)
+                while (j < shipSize)
                 {
-                    int row = random.Next(0, 10);
-                    int col = random.Next(0, 10);
-                    bool isHorizontal = random.Next(0, 2) == 0;
 
-                    if (CanPlaceShip(board, col, row, shipSize, isHorizontal))
+                    // Check if the cell is empty
+                    if (board[col][row] == 0)
                     {
-                        PlaceShip(board, col, row, shipSize, isHorizontal);
-                        placed = true;
+                        // Place the ship
+                        board[col][row] = 1;
+                        j++;
                     }
+                    col++;
                 }
+                row++;
             }
+
+
+
+            /*              bool placed = false;
+                            while (!placed)
+                            {
+                                int row = random.Next(0, 10);
+                                int col = random.Next(0, 10);
+                                bool isHorizontal = random.Next(0, 2) == 0;
+
+                                if (CanPlaceShip(board, col, row, shipSize, isHorizontal))
+                                {
+                                    PlaceShip(board, col, row, shipSize, isHorizontal);
+                                    placed = true;
+                                }
+                            }*/
 
             return board;
         }

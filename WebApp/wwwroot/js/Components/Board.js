@@ -1,5 +1,3 @@
-import Cell from "./Cell.js";
-
 class BaseBoard extends HTMLElement {
 
     shadowRoot;
@@ -37,12 +35,19 @@ class BaseBoard extends HTMLElement {
             let row = document.createElement('tr');
             for (var j = 0; j < this.state.board[i].length; j++) {
 
-                let cell = document.createElement('board-cell');
+                let cell = document.createElement('td');
                 cell.setAttribute('id', `${i}-${j}`);
                 cell.setAttribute('data', this.state.board[i][j]);
+
                 cell.addEventListener('click', () => {
-                    this.handleCellClick(i, j);
+                    var fullCord = cell.getAttribute("id");
+                    //split fullCord with -
+                    var split = fullCord.split("-", 2);
+                    var col = split[0];
+                    var row = split[1];
+                    this.handleCellClick(row, col);
                 });
+
                 row.appendChild(cell);
             }
             this.container.appendChild(row);
@@ -50,12 +55,14 @@ class BaseBoard extends HTMLElement {
         this.shadowRoot.appendChild(this.container);
     }
 
-    handleCellClick(row, col) {
+    handleCellClick(col, row) {
         // Implement logic to send row and col to the backend
-        console.log(`Cell clicked: (${row}, ${col})`);
+        console.log(`Cell clicked: (${col}, ${row})`);
 
+        col = parseInt(col);
+        row = parseInt(row);
         // Send the cell coordinates using SignalR
-        connection.invoke("Shoot", row, col).catch(err => console.error(err.toString()));
+        connection.invoke("Shoot", col, row).catch(err => console.error(err.toString()));
     }
 
 
@@ -87,18 +94,6 @@ class BaseBoard extends HTMLElement {
         linkElem.setAttribute("href", "/css/BattleShip.css");
         this.shadowRoot.appendChild(linkElem);
     }
-
-    addEventListeners() {
-        for (let i = 0; i < this.state.board.length; i++) {
-            for (let j = 0; j < this.state.board[i].length; j++) {
-                const cell = this.shadowRoot.getElementById(`${i}-${j}`);
-                cell.addEventListener("click", () => {
-                    console.log(`Cell clicked: (${i}, ${j})`);
-                    // Add your code to send the cell coordinates to the backend
-                });
-            }
-        }
-    }
 }
 
 class Player1Board extends BaseBoard {
@@ -113,16 +108,7 @@ class Player2Board extends BaseBoard {
     }
 
     connectedCallback() {
-        super.connectedCallback();
-        this.addEventListeners();
-    }
 
-    addEventListeners() {
-        this.addEventListener('cellClicked', (event) => {
-            const [row, col] = event.detail.cellId.split('-');
-            console.log(`Cell clicked: (${row}, ${col})`);
-            // Add your code to send the cell coordinates to the backend
-        });
     }
 }
 

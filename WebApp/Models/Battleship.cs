@@ -54,9 +54,9 @@ namespace WebApp.Models
                     int col = random.Next(0, 10);
                     bool isHorizontal = random.Next(0, 2) == 0;
 
-                    if (CanPlaceShip(board, row, col, shipSize, isHorizontal))
+                    if (CanPlaceShip(board, col, row, shipSize, isHorizontal))
                     {
-                        PlaceShip(board, row, col, shipSize, isHorizontal);
+                        PlaceShip(board, col, row, shipSize, isHorizontal);
                         placed = true;
                     }
                 }
@@ -64,10 +64,10 @@ namespace WebApp.Models
 
             return board;
         }
-
+        
 
         //Ik wil niet meer HOURS WASTED vanaf dit punt = 16.5
-        private bool CanPlaceShip(int[][] board, int row, int col, int shipSize, bool isHorizontal)
+        private bool CanPlaceShip(int[][] board, int col, int row, int shipSize, bool isHorizontal)
         {
             if (isHorizontal)
             {
@@ -75,7 +75,7 @@ namespace WebApp.Models
 
                 for (int i = 0; i < shipSize; i++)
                 {
-                    if (board[row][col + i] != 0) return false;
+                    if (board[col][row + i] != 0) return false;
                 }
             }
             else
@@ -84,7 +84,7 @@ namespace WebApp.Models
 
                 for (int i = 0; i < shipSize; i++)
                 {
-                    if (board[row + i][col] != 0) return false;
+                    if (board[col + i][row] != 0) return false;
                 }
             }
 
@@ -93,20 +93,20 @@ namespace WebApp.Models
 
 
         // 2 = a ship cell
-        private void PlaceShip(int[][] board, int row, int col, int shipSize, bool isHorizontal)
+        private void PlaceShip(int[][] board, int col, int row, int shipSize, bool isHorizontal)
         {
             if (isHorizontal)
             {
                 for (int i = 0; i < shipSize; i++)
                 {
-                    board[row][col + i] = 2;
+                    board[col][row + i] = 2;
                 }
             }
             else
             {
                 for (int i = 0; i < shipSize; i++)
                 {
-                    board[row + i][col] = 2;
+                    board[col + i][row] = 2;
                 }
             }
         }
@@ -184,14 +184,14 @@ namespace WebApp.Models
             return _players.FirstOrDefault(x => x.ConnectionId == connectionId).Name;
         }
 
-        public (bool hit, bool gameOver) Shoot(Player shooter, int row, int col)
+        public (bool hit, bool gameOver) Shoot(Player shooter, int col, int row)
         {
             Player target = shooter == Player1 ? Player2 : Player1;
             int[][] targetBoard = shooter == Player1 ? Board2 : Board1;
 
-            if (targetBoard[row][col] == 2) // 2 represents a ship cell
+            if (targetBoard[col][row] == 2) // 2 represents a ship cell
             {
-                targetBoard[row][col] = 3; // 3 represents a hit ship cell
+                targetBoard[col][row] = 3; // 3 represents a hit ship cell
                 bool gameOver = IsBoardDestroyed(targetBoard);
 
                 if (gameOver)
@@ -201,9 +201,9 @@ namespace WebApp.Models
 
                 return (true, gameOver);
             }
-            else if (targetBoard[row][col] == 0) // 0 represents an empty cell
+            else if (targetBoard[col][row] == 0) // 0 represents an empty cell
             {
-                targetBoard[row][col] = 1; // 1 represents a miss cell
+                targetBoard[col][row] = 1; // 1 represents a miss cell
                 return (false, false);
             }
             else

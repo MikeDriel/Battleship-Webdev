@@ -50,6 +50,7 @@ namespace WebApp.Hubs
                 bool isCurrentPlayer = boardState.IsCurrentPlayer;
                 int[][] board = boardState.Board;
 
+                Context.Items["RoomCode"]= gameId;
 
                 // Send the initial board state to the player
                 await Clients.Caller.SendAsync("InitialBoardState", boardState);
@@ -67,6 +68,10 @@ namespace WebApp.Hubs
                 {
                     // Start the game
                     game.StartGame();
+
+                    await Clients.Group(gameId).SendAsync("InitialBoardState", game.GetBoardStateForPlayer(game.Player1.ConnectionId));
+                    await Clients.Group(gameId).SendAsync("InitialBoardState", game.GetBoardStateForPlayer(game.Player2.ConnectionId));
+
                     // Notify all players in the game about the game start
                     await Clients.Group(gameId).SendAsync("GameStarted", game.Player1.Name, game.Player2.Name);
                 }
@@ -100,8 +105,10 @@ namespace WebApp.Hubs
 
         }
 
-        public async Task Shoot(string gameId, int row, int col)
+        public async Task Shoot(int col, int row)
         {
+            // Get the game ID from the connection ID
+            var gameId = Context.Items["RoomCode"].ToString();
             var game = _gameManager.GetGame(gameId);
 
             if (game != null && !game.IsGameOver)
@@ -112,10 +119,10 @@ namespace WebApp.Hubs
                     Player shooter = game.CurrentPlayer;
 
                     // Attempt to make a shot on the game board
-                    var (hit, gameOver) = game.Shoot(shooter, row, col);
+                    var (hit, gameOver) = game.Shoot(shooter, col, row);
 
                     // Notify all players of the result of the shot
-                    await Clients.Group(gameId).SendAsync("ShotResult", shooter.Name, row, col, hit);
+                    await Clients.Group(gameId).SendAsync("ShotResult", shooter.Name, col, row, hit);
 
                     // If the game is over, notify all players
                     if (gameOver)

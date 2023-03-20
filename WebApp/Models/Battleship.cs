@@ -4,7 +4,7 @@ namespace WebApp.Models
 {
     public class Game
     {
-        private List<Player> _players = new List<Player>();
+        public List<Player> _players = new List<Player>();
         public string GameId { get; set; }
         public bool IsGameOver { get; set; }
 
@@ -21,9 +21,112 @@ namespace WebApp.Models
         public Game(string gameId)
         {
             GameId = gameId;
-            Board1 = CreateBoard();
-            Board2 = CreateBoard();
+            InitializeBoards();
         }
+
+        private void InitializeBoards()
+        {
+            // Initialize the boards for both players
+            Board1 = GenerateInitialBoard();
+            Board2 = GenerateInitialBoard();
+        }
+
+        private int[][] GenerateInitialBoard()
+        {
+            int[] shipSizes = new int[] { 5, 4, 3, 3, 2 }; // Sizes of the ships to place on the board
+            int[][] board = new int[10][];
+
+            // Initialize the board with empty cells
+            for (int i = 0; i < 10; i++)
+            {
+                board[i] = new int[10];
+            }
+
+            Random random = new Random();
+
+            foreach (int shipSize in shipSizes)
+            {
+                bool placed = false;
+
+                while (!placed)
+                {
+                    int row = random.Next(0, 10);
+                    int col = random.Next(0, 10);
+                    bool isHorizontal = random.Next(0, 2) == 0;
+
+                    if (CanPlaceShip(board, row, col, shipSize, isHorizontal))
+                    {
+                        PlaceShip(board, row, col, shipSize, isHorizontal);
+                        placed = true;
+                    }
+                }
+            }
+
+            return board;
+        }
+
+
+        //Ik wil niet meer HOURS WASTED vanaf dit punt = 16.5
+        private bool CanPlaceShip(int[][] board, int row, int col, int shipSize, bool isHorizontal)
+        {
+            if (isHorizontal)
+            {
+                if (col + shipSize > 10) return false;
+
+                for (int i = 0; i < shipSize; i++)
+                {
+                    if (board[row][col + i] != 0) return false;
+                }
+            }
+            else
+            {
+                if (row + shipSize > 10) return false;
+
+                for (int i = 0; i < shipSize; i++)
+                {
+                    if (board[row + i][col] != 0) return false;
+                }
+            }
+
+            return true;
+        }
+
+
+        // 2 = a ship cell
+        private void PlaceShip(int[][] board, int row, int col, int shipSize, bool isHorizontal)
+        {
+            if (isHorizontal)
+            {
+                for (int i = 0; i < shipSize; i++)
+                {
+                    board[row][col + i] = 2;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < shipSize; i++)
+                {
+                    board[row + i][col] = 2;
+                }
+            }
+        }
+
+        public (bool IsCurrentPlayer, int[][] Board) GetBoardStateForPlayer(string connectionId)
+        {
+            if (Player1.ConnectionId == connectionId)
+            {
+                return (true, Board1);
+            }
+            else if (Player2.ConnectionId == connectionId)
+            {
+                return (true, Board2);
+            }
+            else
+            {
+                return (false, null);
+            }
+        }
+
 
         public void AddPlayer(string playerName, string connectionId)
         {
@@ -42,39 +145,6 @@ namespace WebApp.Models
         public void SwitchPlayer()
         {
             CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
-        }
-
-        public ShotResult MakeMove(int row, int col)
-        {
-            int[][] board = CurrentPlayer == Player1 ? Board2 : Board1;
-            ShotResult result;
-
-            if (board[row][col] == 0)
-            {
-                board[row][col] = +1;
-                result = ShotResult.Miss;
-            }
-            else if (board[row][col] > 0)
-            {
-                board[row][col] = +2;
-                result = ShotResult.Hit;
-            }
-            else
-            {
-                result = ShotResult.Invalid;
-            }
-
-            UpdateGameState();
-
-            return result;
-        }
-
-        private void UpdateGameState()
-        {
-            if (IsBoardDestroyed(Board1) || IsBoardDestroyed(Board2))
-            {
-                IsGameOver = true;
-            }
         }
 
         private bool IsBoardDestroyed(int[][] board)
@@ -109,30 +179,45 @@ namespace WebApp.Models
             }
         }
 
-        public int[][] CreateBoard()
+        public string GetPlayerName(string connectionId)
         {
-            return new int[10][]
-            {
-                new int[] { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-            };
+            return _players.FirstOrDefault(x => x.ConnectionId == connectionId).Name;
         }
 
-        public enum ShotResult
+        public (bool hit, bool gameOver) Shoot(Player shooter, int row, int col)
         {
-            Invalid = 0,
-            Miss = 1,
-            Hit = 2
+            Player target = shooter == Player1 ? Player2 : Player1;
+            int[][] targetBoard = shooter == Player1 ? Board2 : Board1;
+
+            if (targetBoard[row][col] == 2) // 2 represents a ship cell
+            {
+                targetBoard[row][col] = 3; // 3 represents a hit ship cell
+                bool gameOver = IsBoardDestroyed(targetBoard);
+
+                if (gameOver)
+                {
+                    IsGameOver = true;
+                }
+
+                return (true, gameOver);
+            }
+            else if (targetBoard[row][col] == 0) // 0 represents an empty cell
+            {
+                targetBoard[row][col] = 1; // 1 represents a miss cell
+                return (false, false);
+            }
+            else
+            {
+                return (false, false);
+            }
+        }
+
+        public int[][] GetBoardState(Player player)
+        {
+            return player == Player1 ? Board1 : Board2;
         }
     }
+
 
     public class PlayerManager
     {
@@ -195,6 +280,34 @@ namespace WebApp.Models
             }
 
             return result.ToString();
+        }
+    }
+
+    public class Ship
+    {
+        public string Type { get; }
+        public int Length { get; }
+        public string Orientation { get; set; }
+        public (int row, int col) Position { get; set; }
+        public int Hits { get; private set; }
+
+        public Ship(string type, int length, string orientation, (int row, int col) position)
+        {
+            Type = type;
+            Length = length;
+            Orientation = orientation;
+            Position = position;
+            Hits = 0;
+        }
+
+        public bool IsSunk()
+        {
+            return Hits == Length;
+        }
+
+        public void Hit()
+        {
+            Hits++;
         }
     }
 }

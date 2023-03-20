@@ -45,11 +45,21 @@ namespace WebApp.Hubs
                 // Join the player to the game group
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
 
+                // Get the board state for the player
+                var boardState = game.GetBoardStateForPlayer(Context.ConnectionId);
+                bool isCurrentPlayer = boardState.IsCurrentPlayer;
+                int[][] board = boardState.Board;
+
+
+                // Send the initial board state to the player
+                await Clients.Caller.SendAsync("InitialBoardState", boardState);
+
                 int playerCount = game.PlayerCount;
 
                 // Notify all players in the game that a new player has joined
                 await Clients.Group(gameId).SendAsync("PlayerJoined", playerName, gameId, playerCount);
 
+                // Sync UI to everyone
                 await SyncGameData(gameId, game.PlayerCount);
 
 
@@ -90,37 +100,35 @@ namespace WebApp.Hubs
 
         }
 
-
-        public async Task Shoot(string gameId, int row, int col, string playerName)
+        public async Task Shoot(string gameId, int row, int col)
         {
-            // Get the game from the list of active games
             var game = _gameManager.GetGame(gameId);
 
-            if (game != null)
+            if (game != null && !game.IsGameOver)
             {
-                // Check if the player is authorized to make a move
-                if (game.CurrentPlayer.Name == playerName)
+                // Ensure the player making the shot is the current player
+                if (game.CurrentPlayer.ConnectionId == Context.ConnectionId)
                 {
-                    // Make the move and get the result
-                    var result = game.MakeMove(row, col);
+                    Player shooter = game.CurrentPlayer;
 
-                    // Notify all players in the game about the move result
-                    await Clients.Group(gameId).SendAsync("MoveResult", playerName, row, col, result);
+                    // Attempt to make a shot on the game board
+                    var (hit, gameOver) = game.Shoot(shooter, row, col);
 
-                    // Check if the game is over
-                    if (game.IsGameOver)
+                    // Notify all players of the result of the shot
+                    await Clients.Group(gameId).SendAsync("ShotResult", shooter.Name, row, col, hit);
+
+                    // If the game is over, notify all players
+                    if (gameOver)
                     {
-                        // Notify all players in the game about the game result
-                        var winnerName = game.GetWinner();
-                        await Clients.Group(gameId).SendAsync("GameOver", winnerName);
-
-                        // Remove the game from the list of active games
-                        _gameManager.RemoveGame(game);
+                        await Clients.Group(gameId).SendAsync("GameOver", game.GetWinner());
                     }
                     else
                     {
                         // Switch the current player
                         game.SwitchPlayer();
+
+                        // Notify all players of the new current player
+                        await Clients.Group(gameId).SendAsync("SwitchPlayer", game.CurrentPlayer.Name);
                     }
                 }
             }

@@ -8,7 +8,7 @@ class Cell extends HTMLElement {
         super(); // always call super() first in the ctor.
         this.shadowRoot = this.attachShadow({ mode: 'open' });
         this.container = document.createElement('table');
- 
+
         //this.CreateCell();
         //this.attachStyling();
     }
@@ -16,6 +16,16 @@ class Cell extends HTMLElement {
     connectedCallback() {
         this.CreateCell();
         this.attachStyling();
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'data' && this.shadowRoot.firstElementChild) {
+            this.shadowRoot.firstElementChild.className = this.GetColor();
+        }
+    }
+
+    static get observedAttributes() {
+        return ['data'];
     }
 
     GetColor() {
@@ -31,14 +41,23 @@ class Cell extends HTMLElement {
                 return "green"; // green
         }
     }
-    
+
     CreateCell() {
         let cell = document.createElement('td');
         cell.id = this.getAttribute('id');
-        //cell.innerText = this.getAttribute('data');
-        //cell.style.background = this.GetColor();
-
         cell.classList.add(this.GetColor());
+
+        // Add the click event listener to the 'td' element
+        cell.addEventListener('click', (event) => {
+            console.log('Cell click event fired');
+            const cellClickedEvent = new CustomEvent('cellClicked', {
+                detail: { cellId: this.getAttribute('id') },
+                bubbles: true,
+                composed: true
+            });
+            this.dispatchEvent(cellClickedEvent);
+        });
+
         this.shadowRoot.appendChild(cell);
     }
 

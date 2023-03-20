@@ -9,15 +9,6 @@ connection.start().then(function () {
     return console.error(err.toString());
 });
 
-// Listen for the "BoardUpdated" event from the hub
-connection.on("BoardUpdated", (playerName, boardState) => {
-    // Determine which player's board to update
-    const boardId = playerName === "player1" ? "player1-board" : "player2-board";
-
-    // Update the board state
-    const board = document.querySelector('#' + boardId); // Add a '#' before boardId
-    board.boardState = boardState; // Use the 'boardState' property instead of the 'updateState' method
-});
 
 connection.on("GameCreated", (gameId) => {
     console.log(gameId);
@@ -28,8 +19,6 @@ connection.on("GameCreated", (gameId) => {
     document.getElementById("player1name").innerHTML = document.getElementById("playerName").value;
 });
 
-
-
 // Listen for the "GameJoined" event from the hub
 connection.on("PlayerJoined", (playerName, gameId) => {
     // Update the UI to show that a player has joined the game
@@ -38,6 +27,28 @@ connection.on("PlayerJoined", (playerName, gameId) => {
 
     console.log(`${playerName} has joined the game with ID: ${gameId}`);
 });
+
+connection.on("InitialBoardState", (boardState) => {
+    // Update the player's board with the received board state
+    updatePlayerBoard(boardState);
+});
+
+// Function to update the player's board with the received board state
+function updatePlayerBoard(boardData) {
+    // Get the appropriate board instance based on the IsCurrentPlayer property
+    const playerBoard = boardData.IsCurrentPlayer
+        ? document.querySelector("player1-board")
+        : document.querySelector("player2-board");
+
+    // Update the board cells with the received board state
+    for (let row = 0; row < boardData.Board.length; row++) {
+        for (let col = 0; col < boardData.Board[row].length; col++) {
+            // Update the cell at (row, col) with the value from boardData.Board
+            playerBoard.updateCell(row, col, boardData.Board[row][col]);
+        }
+    }
+}
+
 
 // Listen for the "GameStarted" event from the hub
 connection.on("GameStarted", () => {

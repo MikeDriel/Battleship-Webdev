@@ -28,14 +28,17 @@ connection.on("PlayerJoined", (playerName, gameId) => {
     console.log(`${playerName} has joined the game with ID: ${gameId}`);
 });
 
-connection.on("InitialBoardState", (boardState) => {
+connection.on("UpdateBoardState", (defenseBoard, attackBoard) => {
+    debugger;
+    const player1BoardElement = document.querySelector('player1-board');
+    const player2BoardElement = document.querySelector('player2-board');
 
-    let playerBoard = boardState.IsCurrentPlayer
-        ? document.querySelector("player1-board")
-        : document.querySelector("player2-board");
+
+        player1BoardElement.updateBoard(defenseBoard);
 
 
-    playerBoard.updateBoard(boardState.board);
+
+        player2BoardElement.updateBoard(attackBoard);
 
 });
 

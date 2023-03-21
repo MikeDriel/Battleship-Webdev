@@ -18,7 +18,9 @@ namespace WebApp.Models
         public int[][] Board1 { get; set; }
         public int[][] Board2 { get; set; }
 
-        public Game(string gameId)
+        public bool Started { get; set; }
+
+    public Game(string gameId)
         {
             GameId = gameId;
             InitializeBoards();
@@ -45,29 +47,29 @@ namespace WebApp.Models
             Random random = new Random();
 
             int j = 0;
-            int row = 0;
+            int col = 0;
             
             foreach (int shipSize in shipSizes)
             {
-                int col = 0;
+                int row = 0;
 
                 while (j < shipSize)
                 {
-
+                    
                     // Check if the cell is empty
-                    if (board[col][row] == 0)
+                    if (board[row][col] == 0)
                     {
                         // Place the ship
-                        board[col][row] = 1;
+                        board[row][col] = 1;
                         j++;
                     }
-                    col++;
+                    row++;
                 }
-                row++;
+                col++;
             }
 
 
-
+            //Kinda Legacy
             /*              bool placed = false;
                             while (!placed)
                             {
@@ -84,27 +86,57 @@ namespace WebApp.Models
 
             return board;
         }
-        
 
-        //Ik wil niet meer HOURS WASTED vanaf dit punt = 16.5
-        private bool CanPlaceShip(int[][] board, int col, int row, int shipSize, bool isHorizontal)
+        public bool Shoot(Player shooter, int row, int col)
+        {
+            const int EmptyCell = 0;
+            const int MissedCell = 1;
+            const int ShipCell = 2;
+            const int HitShipCell = 3;
+
+            int[][] targetBoard = shooter == Player1 ? Board2 : Board1;
+            int cellValue = targetBoard[row][col];
+
+            if (cellValue == ShipCell)
+            {
+                targetBoard[row][col] = HitShipCell;
+                bool gameOver = IsBoardDestroyed(targetBoard);
+
+                if (gameOver)
+                {
+                    IsGameOver = true;
+                }
+
+                return (true);
+            }
+            else if (cellValue == EmptyCell)
+            {
+                targetBoard[row][col] = MissedCell;
+            }
+
+            return (false);
+        }
+
+
+        //Legacy CODE
+        private bool CanPlaceShip(int[][] board, int row, int col, int shipSize, bool isHorizontal)
         {
             if (isHorizontal)
-            {
-                if (col + shipSize > 10) return false;
-
-                for (int i = 0; i < shipSize; i++)
-                {
-                    if (board[col][row + i] != 0) return false;
-                }
-            }
-            else
             {
                 if (row + shipSize > 10) return false;
 
                 for (int i = 0; i < shipSize; i++)
                 {
-                    if (board[col + i][row] != 0) return false;
+                    if (board[row][col + i] != 0) return false;
+                }
+            }
+            else
+            {
+                if (col + shipSize > 10) return false;
+
+                for (int i = 0; i < shipSize; i++)
+                {
+                    if (board[row + i][col] != 0) return false;
                 }
             }
 
@@ -113,39 +145,40 @@ namespace WebApp.Models
 
 
         // 2 = a ship cell
-        private void PlaceShip(int[][] board, int col, int row, int shipSize, bool isHorizontal)
+        private void PlaceShip(int[][] board, int row, int col, int shipSize, bool isHorizontal)
         {
             if (isHorizontal)
             {
                 for (int i = 0; i < shipSize; i++)
                 {
-                    board[col][row + i] = 2;
+                    board[row][col + i] = 2;
                 }
             }
             else
             {
                 for (int i = 0; i < shipSize; i++)
                 {
-                    board[col + i][row] = 2;
+                    board[row + i][col] = 2;
                 }
             }
         }
 
-        public (bool IsCurrentPlayer, int[][] Board) GetBoardStateForPlayer(string connectionId)
+        public (bool IsCurrentPlayer, int[][] DefenseBoard, int[][] AttackBoard) GetBoardStateForPlayer(string connectionId)
         {
             if (Player1.ConnectionId == connectionId)
             {
-                return (true, Board1);
+                return (true, Board1, Board2);
             }
             else if (Player2.ConnectionId == connectionId)
             {
-                return (true, Board2);
+                return (true, Board2, Board1);
             }
             else
             {
-                return (false, null);
+                return (false, null, null);
             }
         }
+
 
 
         public void AddPlayer(string playerName, string connectionId)
@@ -160,6 +193,7 @@ namespace WebApp.Models
             // Randomly select a player to start the game
             var random = new Random();
             CurrentPlayer = random.Next(0, 2) == 0 ? Player1 : Player2;
+            Started = true;
         }
 
         public void SwitchPlayer()
@@ -202,34 +236,6 @@ namespace WebApp.Models
         public string GetPlayerName(string connectionId)
         {
             return _players.FirstOrDefault(x => x.ConnectionId == connectionId).Name;
-        }
-
-        public (bool hit, bool gameOver) Shoot(Player shooter, int col, int row)
-        {
-            Player target = shooter == Player1 ? Player2 : Player1;
-            int[][] targetBoard = shooter == Player1 ? Board2 : Board1;
-
-            if (targetBoard[col][row] == 2) // 2 represents a ship cell
-            {
-                targetBoard[col][row] = 3; // 3 represents a hit ship cell
-                bool gameOver = IsBoardDestroyed(targetBoard);
-
-                if (gameOver)
-                {
-                    IsGameOver = true;
-                }
-
-                return (true, gameOver);
-            }
-            else if (targetBoard[col][row] == 0) // 0 represents an empty cell
-            {
-                targetBoard[col][row] = 1; // 1 represents a miss cell
-                return (false, false);
-            }
-            else
-            {
-                return (false, false);
-            }
         }
 
         public int[][] GetBoardState(Player player)

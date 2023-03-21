@@ -48,7 +48,7 @@ namespace WebApp.Hubs
                 // Get the board state for the player
                 var boardState = game.GetBoardStateForPlayer(Context.ConnectionId);
 
-                Context.Items["RoomCode"]= gameId;
+                Context.Items["RoomCode"] = gameId;
 
                 int playerCount = game.PlayerCount;
 
@@ -61,10 +61,11 @@ namespace WebApp.Hubs
 
                 if (game.PlayerCount == 2)
                 {
+
+                    await SendBoardState(Context.ConnectionId);
+
                     // Start the game
                     game.StartGame();
-
-                    await Clients.Group(gameId).SendAsync("InitialBoardState", boardState);
 
                     // Notify all players in the game about the game start
                     await Clients.Group(gameId).SendAsync("GameStarted", game.Player1.Name, game.Player2.Name);
@@ -99,32 +100,66 @@ namespace WebApp.Hubs
 
         }
 
-        public async Task Shoot(int col, int row)
+        public async Task SendBoardState(string connectionId)
+        {
+            var gameId = Context.Items["RoomCode"].ToString();
+            var game = _gameManager.GetGame(gameId);
+
+            if (game != null)
+            {
+                var (isCurrentPlayer, defenseBoard, attackBoard) = game.GetBoardStateForPlayer(connectionId);
+                if (isCurrentPlayer)
+                {
+                    await Clients.Group(gameId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
+                }
+                else
+                {
+                    await Clients.Caller.SendAsync("Error", "Player not found");
+                }
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("Error", "Game not found");
+            }
+        }
+
+
+        public async Task Shoot(int row, int col)
         {
             // Get the game ID from the connection ID
             var gameId = Context.Items["RoomCode"].ToString();
             var game = _gameManager.GetGame(gameId);
 
-            if (game != null && !game.IsGameOver)
+            if (game != null)
             {
-                // Ensure the player making the shot is the current player
-                if (game.CurrentPlayer.ConnectionId == Context.ConnectionId)
+                // If the game is over, notify all players
+                if (!game.IsGameOver)
                 {
-                    Player shooter = game.CurrentPlayer;
-
-                    // Attempt to make a shot on the game board
-                    var (hit, gameOver) = game.Shoot(shooter, col, row);
-
-                    // Notify all players of the result of the shot
-                    await Clients.Group(gameId).SendAsync("ShotResult", shooter.Name, col, row, hit);
-
-                    // If the game is over, notify all players
-                    if (gameOver)
+                    // Ensure the player making the shot is the current player
+                    if (game.CurrentPlayer.ConnectionId == Context.ConnectionId)
                     {
-                        await Clients.Group(gameId).SendAsync("GameOver", game.GetWinner());
-                    }
-                    else
-                    {
+                        Player shooter = game.CurrentPlayer;
+
+                        // Attempt to make a shot on the game board
+                        bool hit = game.Shoot(shooter, row, col);
+                        if (hit)
+                        {
+
+                            await SendBoardState(Context.ConnectionId);
+
+                            // Check if the game is over
+                            if (game.IsGameOver)
+                            {
+                                await Clients.Group(gameId).SendAsync("GameOver", game.GetWinner());
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            // Notify all players of the result of the shot
+                            await Clients.Group(gameId).SendAsync("ShotResult", game.Board2, row, col, hit);
+                        }
+
                         // Switch the current player
                         game.SwitchPlayer();
 
@@ -132,6 +167,14 @@ namespace WebApp.Hubs
                         await Clients.Group(gameId).SendAsync("SwitchPlayer", game.CurrentPlayer.Name);
                     }
                 }
+                else
+                {
+                    await Clients.Group(gameId).SendAsync("GameOver", game.GetWinner());
+                }
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("ShotError", "Game not found");
             }
         }
     }

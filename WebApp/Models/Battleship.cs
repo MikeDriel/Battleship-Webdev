@@ -357,10 +357,6 @@ namespace WebApp.Models
 
     public class Ship
     {
-        private int shipSize;
-        private int orientation;
-        private (int row, int col) value;
-
         public string Type { get; }
         public int Length { get; }
         public string Orientation { get; set; }

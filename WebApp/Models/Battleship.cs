@@ -96,6 +96,11 @@ namespace WebApp.Models
                 return false;
             }
 
+            // This is how this part works
+            // (-1, -1) (-1, 0) (-1, 1)
+            // (0, -1)(row, col)(0, 1)
+            // (1, -1) (1, 0) (1, 1)
+
             int[] rowOffsets = { -1, -1, -1, 0, 0, 1, 1, 1 };
             int[] colOffsets = { -1, 0, 1, -1, 1, -1, 0, 1 };
 

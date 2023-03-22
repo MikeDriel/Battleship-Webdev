@@ -106,9 +106,6 @@ namespace WebApp.Hubs
             {
                 var (isCurrentPlayer, defenseBoard, attackBoard) = game.GetBoardStateForPlayer(connectionId);
 
-                //var defenseBoard = game.Board1;
-                //var attackBoard = game.Board2;
-
                 if (game.Player1 == game.CurrentPlayer)
                 {
                     await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
@@ -119,17 +116,6 @@ namespace WebApp.Hubs
                     await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateBoardState", attackBoard, defenseBoard);
                     await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
                 }
-
-                
-                
-                /* if (isCurrentPlayer)
-                 {
-                     await Clients.Client(game.CurrentPlayer.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
-                 }
-                 else
-                 {
-                     await Clients.Client(game.CurrentPlayer.ConnectionId).SendAsync("UpdateBoardState", attackBoard, defenseBoard);
-                 }*/
             }
             else
             {

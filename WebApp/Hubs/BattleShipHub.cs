@@ -142,37 +142,27 @@ namespace WebApp.Hubs
                         Player shooter = game.CurrentPlayer;
 
                         // Attempt to make a shot on the game board
-                        bool hit = game.Shoot(shooter, row, col);
-                        await SendBoardState(Context.ConnectionId);
-                        if (hit)
-                        {
+                        Game.MoveStates moveResult = game.Shoot(shooter, row, col);
 
-                            // Check if the game is over
-                            if (game.IsGameOver)
+                        if (moveResult != Game.MoveStates.Illegal)
+                        {
+                            await SendBoardState(Context.ConnectionId);
+                           
+
+                            if (moveResult == Game.MoveStates.Hit)
                             {
-                                await Clients.Group(gameId).SendAsync("GameOver", game.GetWinner());
                                 return;
                             }
-                        }
-                        else
-                        {
-                            // Notify all players of the result of the shot
-                            await Clients.Group(gameId).SendAsync("ShotResult", game.Board2, row, col, hit);
-                        }
 
-                        // Switch the current player
-                        game.SwitchPlayer();
-                        await UpdateCurrentPlayer();
+                            game.SwitchPlayer();
+                            await UpdateCurrentPlayer();
+                        }
                     }
                 }
                 else
                 {
                     await Clients.Group(gameId).SendAsync("GameOver", game.GetWinner());
                 }
-            }
-            else
-            {
-                await Clients.Caller.SendAsync("ShotError", "Game not found");
             }
         }
 

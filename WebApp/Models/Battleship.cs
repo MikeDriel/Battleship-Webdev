@@ -20,7 +20,7 @@ namespace WebApp.Models
 
         public bool Started { get; set; }
 
-    public Game(string gameId)
+        public Game(string gameId)
         {
             GameId = gameId;
             InitializeBoards();
@@ -55,7 +55,7 @@ namespace WebApp.Models
                     int col = random.Next(10);
                     int row = random.Next(10);
 
-                   
+
                     int orientation = random.Next(2);
 
                     bool canPlace = true;
@@ -65,7 +65,7 @@ namespace WebApp.Models
                         int currentCol = orientation == 0 ? col + i : col;
                         int currentRow = orientation == 1 ? row + i : row;
 
-                        
+
                         if (!IsCellEmptyAndNotAdjacentToShips(board, currentRow, currentCol))
                         {
                             canPlace = false;
@@ -118,10 +118,7 @@ namespace WebApp.Models
             return true;
         }
 
-
-
-
-        public bool Shoot(Player shooter, int row, int col)
+        public MoveStates Shoot(Player shooter, int row, int col)
         {
             const int EmptyCell = 0;
             const int MissedCell = 1;
@@ -131,25 +128,28 @@ namespace WebApp.Models
             int[][] targetBoard = shooter == Player1 ? Board2 : Board1;
             int cellValue = targetBoard[row][col];
 
-            if (cellValue == ShipCell)
-            {
-                targetBoard[row][col] = HitShipCell;
-                bool gameOver = IsBoardDestroyed(targetBoard);
-
-                if (gameOver)
-                {
-                    IsGameOver = true;
-                }
-
-                return (true);
-            }
-            else if (cellValue == EmptyCell)
+            if (cellValue == EmptyCell)
             {
                 targetBoard[row][col] = MissedCell;
+
+                return MoveStates.Miss;
+            }
+            else if (cellValue == ShipCell)
+            {
+                targetBoard[row][col] = HitShipCell;
+                return MoveStates.Hit;
             }
 
-            return (false);
+            return MoveStates.Illegal;
         }
+
+        public enum MoveStates
+        {
+            Hit,
+            Miss,
+            Illegal
+        }
+
 
         public (bool IsCurrentPlayer, int[][] DefenseBoard, int[][] AttackBoard) GetBoardStateForPlayer(string connectionId)
         {

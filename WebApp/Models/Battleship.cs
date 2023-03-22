@@ -35,9 +35,9 @@ namespace WebApp.Models
 
         private int[][] GenerateInitialBoard()
         {
-            int[] shipSizes = new int[] { 5, 4, 3, 3, 2}; // Sizes of the ships to place on the board
+            int[] shipSizes = new int[] { 5, 4, 3, 3, 2 }; // Sizes of the ships to place on the board
             int[][] board = new int[10][];
-            
+
             // Initialize the board with empty cells
             for (int i = 0; i < 10; i++)
             {
@@ -46,46 +46,75 @@ namespace WebApp.Models
 
             Random random = new Random();
 
-            int j = 0;
-            int col = 0;
-            
             foreach (int shipSize in shipSizes)
             {
-                int row = 0;
+                bool shipPlaced = false;
 
-                while (j < shipSize)
+                while (!shipPlaced)
                 {
-                    
-                    // Check if the cell is empty
-                    if (board[row][col] == 0)
+                    int col = random.Next(10);
+                    int row = random.Next(10);
+
+                   
+                    int orientation = random.Next(2);
+
+                    bool canPlace = true;
+
+                    for (int i = 0; i < shipSize; i++)
                     {
-                        // Place the ship
-                        board[row][col] = 2;
-                        j++;
+                        int currentCol = orientation == 0 ? col + i : col;
+                        int currentRow = orientation == 1 ? row + i : row;
+
+                        
+                        if (!IsCellEmptyAndNotAdjacentToShips(board, currentRow, currentCol))
+                        {
+                            canPlace = false;
+                            break;
+                        }
                     }
-                    row++;
+
+                    if (canPlace)
+                    {
+                        for (int i = 0; i < shipSize; i++)
+                        {
+                            int currentCol = orientation == 0 ? col + i : col;
+                            int currentRow = orientation == 1 ? row + i : row;
+                            board[currentRow][currentCol] = 2;
+                        }
+                        shipPlaced = true;
+                    }
                 }
-                col++;
             }
-
-
-            //Kinda Legacy
-            /*              bool placed = false;
-                            while (!placed)
-                            {
-                                int row = random.Next(0, 10);
-                                int col = random.Next(0, 10);
-                                bool isHorizontal = random.Next(0, 2) == 0;
-
-                                if (CanPlaceShip(board, col, row, shipSize, isHorizontal))
-                                {
-                                    PlaceShip(board, col, row, shipSize, isHorizontal);
-                                    placed = true;
-                                }
-                            }*/
 
             return board;
         }
+
+        private bool IsCellEmptyAndNotAdjacentToShips(int[][] board, int row, int col)
+        {
+            if (row < 0 || col < 0 || row >= board.Length || col >= board[row].Length || board[row][col] != 0)
+            {
+                return false;
+            }
+
+            int[] rowOffsets = { -1, -1, -1, 0, 0, 1, 1, 1 };
+            int[] colOffsets = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+            for (int i = 0; i < rowOffsets.Length; i++)
+            {
+                int newRow = row + rowOffsets[i];
+                int newCol = col + colOffsets[i];
+
+                if (newRow >= 0 && newCol >= 0 && newRow < board.Length && newCol < board[newRow].Length && board[newRow][newCol] != 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+
 
         public bool Shoot(Player shooter, int row, int col)
         {
@@ -117,52 +146,6 @@ namespace WebApp.Models
             return (false);
         }
 
-
-        //Legacy CODE
-        private bool CanPlaceShip(int[][] board, int row, int col, int shipSize, bool isHorizontal)
-        {
-            if (isHorizontal)
-            {
-                if (row + shipSize > 10) return false;
-
-                for (int i = 0; i < shipSize; i++)
-                {
-                    if (board[row][col + i] != 0) return false;
-                }
-            }
-            else
-            {
-                if (col + shipSize > 10) return false;
-
-                for (int i = 0; i < shipSize; i++)
-                {
-                    if (board[row + i][col] != 0) return false;
-                }
-            }
-
-            return true;
-        }
-
-
-        // 2 = a ship cell
-        private void PlaceShip(int[][] board, int row, int col, int shipSize, bool isHorizontal)
-        {
-            if (isHorizontal)
-            {
-                for (int i = 0; i < shipSize; i++)
-                {
-                    board[row][col + i] = 2;
-                }
-            }
-            else
-            {
-                for (int i = 0; i < shipSize; i++)
-                {
-                    board[row + i][col] = 2;
-                }
-            }
-        }
-
         public (bool IsCurrentPlayer, int[][] DefenseBoard, int[][] AttackBoard) GetBoardStateForPlayer(string connectionId)
         {
             if (Player1.ConnectionId == connectionId)
@@ -192,13 +175,29 @@ namespace WebApp.Models
         {
             // Randomly select a player to start the game
             var random = new Random();
-            CurrentPlayer = random.Next(0, 2) == 0 ? Player1 : Player2;
+
+            if (random.Next(0, 2) == 0)
+            {
+                CurrentPlayer = Player1;
+            }
+            else
+            {
+                CurrentPlayer = Player2;
+            }
+
             Started = true;
         }
 
         public void SwitchPlayer()
         {
-            CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
+            if (CurrentPlayer == Player1)
+            {
+                CurrentPlayer = Player2;
+            }
+            else
+            {
+                CurrentPlayer = Player1;
+            }
         }
 
         private bool IsBoardDestroyed(int[][] board)

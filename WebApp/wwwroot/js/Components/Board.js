@@ -75,9 +75,17 @@ class BaseBoard extends HTMLElement {
                     cell.setAttribute('data', this.state.board[i][j]);
 
                     // If the cell's state is 2, set the background color to red
-                    if (this.state.board[i][j] === 2) {
+
+                    if (this.state.board[i][j] === 3) {
                         cell.style.backgroundColor = 'red';
-                    } else {
+                    }
+                    else if (this.state.board[i][j] === 2) {
+                        cell.style.backgroundColor = 'green';
+                    }
+                    else if (this.state.board[i][j] === 1) {
+                        cell.style.backgroundColor = 'blue';
+                    }
+                    else {
                         // Reset the background color for other states if necessary
                         cell.style.backgroundColor = '';
                     }

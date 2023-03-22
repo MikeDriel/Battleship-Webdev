@@ -103,15 +103,31 @@ namespace WebApp.Hubs
             if (game != null)
             {
                 var (isCurrentPlayer, defenseBoard, attackBoard) = game.GetBoardStateForPlayer(connectionId);
-                if (isCurrentPlayer)
-                    // defenseboard && attackboard zijn hetzelfde somehow
+
+                //var defenseBoard = game.Board1;
+                //var attackBoard = game.Board2;
+
+                if (game.Player1 == game.CurrentPlayer)
                 {
-                    await Clients.Group(gameId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
+                    await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
+                    await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateBoardState", attackBoard, defenseBoard);
                 }
                 else
                 {
-                    await Clients.Caller.SendAsync("Error", "Player not found");
+                    await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateBoardState", attackBoard, defenseBoard);
+                    await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
                 }
+
+
+
+                /* if (isCurrentPlayer)
+                 {
+                     await Clients.Client(game.CurrentPlayer.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
+                 }
+                 else
+                 {
+                     await Clients.Client(game.CurrentPlayer.ConnectionId).SendAsync("UpdateBoardState", attackBoard, defenseBoard);
+                 }*/
             }
             else
             {

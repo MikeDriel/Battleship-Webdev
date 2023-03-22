@@ -5,13 +5,8 @@ namespace WebApp.Hubs
 {
     public class BattleShipHub : Hub
     {
+        public static readonly GameManager _gameManager = new GameManager();
 
-        private readonly GameManager _gameManager;
-
-        public BattleShipHub(GameManager gameManager)
-        {
-            _gameManager = gameManager;
-        }
         public async Task<string> CreateGame(string playerName)
         {
             // Generate a unique game ID
@@ -109,6 +104,7 @@ namespace WebApp.Hubs
             {
                 var (isCurrentPlayer, defenseBoard, attackBoard) = game.GetBoardStateForPlayer(connectionId);
                 if (isCurrentPlayer)
+                    // defenseboard && attackboard zijn hetzelfde somehow
                 {
                     await Clients.Group(gameId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
                 }
@@ -142,10 +138,9 @@ namespace WebApp.Hubs
 
                         // Attempt to make a shot on the game board
                         bool hit = game.Shoot(shooter, row, col);
+                        await SendBoardState(Context.ConnectionId);
                         if (hit)
                         {
-
-                            await SendBoardState(Context.ConnectionId);
 
                             // Check if the game is over
                             if (game.IsGameOver)

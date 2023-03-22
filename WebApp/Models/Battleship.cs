@@ -60,7 +60,7 @@ namespace WebApp.Models
                     if (board[row][col] == 0)
                     {
                         // Place the ship
-                        board[row][col] = 1;
+                        board[row][col] = 2;
                         j++;
                     }
                     row++;

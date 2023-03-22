@@ -68,10 +68,9 @@ class BaseBoard extends HTMLElement {
 
     updateBoard(newState) {
         this.state.board = newState;
-
         for (let i = 0; i < this.state.board.length; i++) {
             for (let j = 0; j < this.state.board[i].length; j++) {
-                const cell = this.shadowRoot.querySelector(`#${i}-${j}`);
+                const cell = this.shadowRoot.getElementById(`${i}-${j}`);
                 if (cell) {
                     cell.setAttribute('data', this.state.board[i][j]);
 

@@ -14,8 +14,9 @@ connection.on("GameCreated", (gameId) => {
     console.log(gameId);
     document.getElementById("lobbyscreen").remove();
     document.getElementById("playfield").classList.add("visible");
+    document.getElementById("gameRoomCode").classList.add("visible");
 
-    document.getElementById("gameRoomCode").innerHTML = gameId;
+    document.getElementById("gameRoomCode").innerHTML = `Roomcode: ${gameId}`;
     document.getElementById("player1name").innerHTML = document.getElementById("playerName").value;
 });
 
@@ -24,22 +25,23 @@ connection.on("PlayerJoined", (playerName, gameId) => {
     // Update the UI to show that a player has joined the game
     document.getElementById("lobbyscreen").remove();
     document.getElementById("playfield").classList.add("visible");
-
+    document.getElementById("gameRoomCode").classList.add("visible");
     console.log(`${playerName} has joined the game with ID: ${gameId}`);
 });
 
 connection.on("UpdateBoardState", (defenseBoard, attackBoard) => {
-    debugger;
     const player1BoardElement = document.querySelector('player1-board');
     const player2BoardElement = document.querySelector('player2-board');
 
-
         player1BoardElement.updateBoard(defenseBoard);
-
-
 
         player2BoardElement.updateBoard(attackBoard);
 
+});
+
+connection.on("UpdateTurn", (player) => {
+    const currentTurnName = document.getElementById("currentTurnName");
+    currentTurnName.innerHTML = (`It is ${player}'s turn!`);
 });
 
 
@@ -58,7 +60,7 @@ connection.on("GameOver", (winnerName) => {
 connection.on("GameDataSynced", (player1Name, player2Name, gameId) => {
     document.getElementById("player1name").innerHTML = player1Name;
     document.getElementById("player2name").innerHTML = player2Name;
-    document.getElementById("gameRoomCode").innerHTML = gameId;
+    document.getElementById("gameRoomCode").innerHTML = `Roomcode: ${gameId}`;
 });
 
 //adds a click event listener:

@@ -1,14 +1,24 @@
 ﻿/* BATTLESHIP */
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+Great+Primer&display=swap');
 
+.greatFell {
+    font-family: 'IM Fell Great Primer', serif;
+}
 body {
     background: #16202c;
+}
+.gameRoomCode {
+    align-items: center;
+    align-self: center;
+    font-size: 36px;
+    display: none;
 }
 
 .playfield {
     display: none;
     flex-direction: row;
     justify-content: space-evenly;
-    background-color: #0a1017
+    background-color: #16202c;
 }
 
 .visible {

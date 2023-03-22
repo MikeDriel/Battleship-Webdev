@@ -64,6 +64,7 @@ namespace WebApp.Hubs
 
                     // Notify all players in the game about the game start
                     await Clients.Group(gameId).SendAsync("GameStarted", game.Player1.Name, game.Player2.Name);
+                    await UpdateCurrentPlayer();
                 }
             }
             else
@@ -91,8 +92,9 @@ namespace WebApp.Hubs
                 player2Name = game.Player2.Name;
             }
 
-            await Clients.Group(gameId).SendAsync("GameDataSynced", player1Name, player2Name, gameId);
-
+            //await Clients.Group(gameId).SendAsync("GameDataSynced", player1Name, player2Name, gameId);
+            await Clients.Client(game.Player1.ConnectionId).SendAsync("GameDataSynced", player1Name, player2Name, gameId);
+            await Clients.Client(game.Player2.ConnectionId).SendAsync("GameDataSynced", player2Name, player1Name, gameId);
         }
 
         public async Task SendBoardState(string connectionId)
@@ -118,8 +120,8 @@ namespace WebApp.Hubs
                     await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
                 }
 
-
-
+                
+                
                 /* if (isCurrentPlayer)
                  {
                      await Clients.Client(game.CurrentPlayer.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
@@ -142,7 +144,7 @@ namespace WebApp.Hubs
             var gameId = Context.Items["RoomCode"].ToString();
             var game = _gameManager.GetGame(gameId);
 
-            if (game != null)
+            if (game is not null && game.CurrentPlayer is not null)
             {
                 // If the game is over, notify all players
                 if (!game.IsGameOver)
@@ -150,6 +152,7 @@ namespace WebApp.Hubs
                     // Ensure the player making the shot is the current player
                     if (game.CurrentPlayer.ConnectionId == Context.ConnectionId)
                     {
+                        
                         Player shooter = game.CurrentPlayer;
 
                         // Attempt to make a shot on the game board
@@ -173,9 +176,10 @@ namespace WebApp.Hubs
 
                         // Switch the current player
                         game.SwitchPlayer();
-
-                        // Notify all players of the new current player
-                        await Clients.Group(gameId).SendAsync("SwitchPlayer", game.CurrentPlayer.Name);
+                        await UpdateCurrentPlayer();
+                        // DEPRECATED BY FUNCTION UpdateCurrentPlayer
+                        //// Notify all players of the new current player
+                        //await Clients.Group(gameId).SendAsync("SwitchPlayer", game.CurrentPlayer.Name);
                     }
                 }
                 else
@@ -187,6 +191,14 @@ namespace WebApp.Hubs
             {
                 await Clients.Caller.SendAsync("ShotError", "Game not found");
             }
+        }
+
+        public async Task UpdateCurrentPlayer()
+        {
+            var gameId = Context.Items["RoomCode"].ToString();
+            var game = _gameManager.GetGame(gameId);
+
+            await Clients.Group(gameId).SendAsync("UpdateTurn", game.CurrentPlayer.Name);
         }
     }
 }

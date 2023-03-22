@@ -177,9 +177,6 @@ namespace WebApp.Hubs
                         // Switch the current player
                         game.SwitchPlayer();
                         await UpdateCurrentPlayer();
-                        // DEPRECATED BY FUNCTION UpdateCurrentPlayer
-                        //// Notify all players of the new current player
-                        //await Clients.Group(gameId).SendAsync("SwitchPlayer", game.CurrentPlayer.Name);
                     }
                 }
                 else
@@ -197,8 +194,18 @@ namespace WebApp.Hubs
         {
             var gameId = Context.Items["RoomCode"].ToString();
             var game = _gameManager.GetGame(gameId);
-
-            await Clients.Group(gameId).SendAsync("UpdateTurn", game.CurrentPlayer.Name);
+            var board1 = 1;
+            var board2 = 2;
+            if (game.CurrentPlayer == game.Player1)
+            {
+                await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateTurn", game.CurrentPlayer.Name, board1, board2);
+                await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateTurn", game.CurrentPlayer.Name, board2, board1);
+            }
+            else
+            {
+                await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateTurn", game.CurrentPlayer.Name, board1, board2);
+                await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateTurn", game.CurrentPlayer.Name, board2, board1);
+            }
         }
     }
 }

@@ -25,6 +25,10 @@ body {
     display: flex;
 }
 
+.inactiveopacity {
+    opacity: 0.5;
+}
+
 .messageArea {
     width: 100%;
     text-align: center;

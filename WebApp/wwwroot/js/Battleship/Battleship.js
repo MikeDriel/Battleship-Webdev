@@ -39,9 +39,14 @@ connection.on("UpdateBoardState", (defenseBoard, attackBoard) => {
 
 });
 
-connection.on("UpdateTurn", (player) => {
+connection.on("UpdateTurn", (player, activeboard, inactiveboard) => {
     const currentTurnName = document.getElementById("currentTurnName");
     currentTurnName.innerHTML = (`It is ${player}'s turn!`);
+    
+    const BoardElementActive = document.querySelector(`player${activeboard}-board`);
+    BoardElementActive.classList.remove("inactiveopacity");
+    const BoardElementInActive = document.querySelector(`player${inactiveboard}-board`);
+    BoardElementInActive.classList.add("inactiveopacity");
 });
 
 

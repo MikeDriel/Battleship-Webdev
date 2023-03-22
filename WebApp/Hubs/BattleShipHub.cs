@@ -106,15 +106,18 @@ namespace WebApp.Hubs
             {
                 var (isCurrentPlayer, defenseBoard, attackBoard) = game.GetBoardStateForPlayer(connectionId);
 
+                int[][] safeDefenseBoard = defenseBoard.Select(row =>row.Select(value => value == 2 ? 0 : value).ToArray()).ToArray();
+                int[][] safeAttackBoard = attackBoard.Select(row => row.Select(value => value == 2 ? 0 : value).ToArray()).ToArray();
+
                 if (game.Player1 == game.CurrentPlayer)
                 {
-                    await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
-                    await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateBoardState", attackBoard, defenseBoard);
+                    await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, safeAttackBoard);
+                    await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateBoardState", attackBoard, safeDefenseBoard);
                 }
                 else
                 {
-                    await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateBoardState", attackBoard, defenseBoard);
-                    await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, attackBoard);
+                    await Clients.Client(game.Player1.ConnectionId).SendAsync("UpdateBoardState", attackBoard, safeDefenseBoard);
+                    await Clients.Client(game.Player2.ConnectionId).SendAsync("UpdateBoardState", defenseBoard, safeAttackBoard);
                 }
             }
             else

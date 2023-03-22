@@ -18,6 +18,10 @@ namespace WebApp.Models
         public int[][] Board1 { get; set; }
         public int[][] Board2 { get; set; }
 
+        public List<Ship> Ships1 { get; set; }
+        public List<Ship> Ships2 { get; set; }
+
+
         public bool Started { get; set; }
 
         public Game(string gameId)
@@ -28,14 +32,22 @@ namespace WebApp.Models
 
         private void InitializeBoards()
         {
-            // Initialize the boards for both players
-            Board1 = GenerateInitialBoard();
-            Board2 = GenerateInitialBoard();
+            // Initialize the boards and ships for both players
+            (Board1, Ships1) = GenerateInitialBoard();
+            (Board2, Ships2) = GenerateInitialBoard();
         }
 
-        private int[][] GenerateInitialBoard()
+        private (int[][], List<Ship>) GenerateInitialBoard()
         {
-            int[] shipSizes = new int[] { 5, 4, 3, 3, 2 }; // Sizes of the ships to place on the board
+            (string type, int length)[] shipData = new (string, int)[] {
+                ("Carrier", 5),
+                ("Battleship", 4),
+                ("Cruiser", 3),
+                ("Submarine", 3),
+                ("Destroyer", 2)
+             }; 
+
+            List<Ship> ships = new List<Ship>();
             int[][] board = new int[10][];
 
             // Initialize the board with empty cells
@@ -46,25 +58,25 @@ namespace WebApp.Models
 
             Random random = new Random();
 
-            foreach (int shipSize in shipSizes)
+            foreach (var shipInfo in shipData)
             {
+                string shipType = shipInfo.type;
+                int shipSize = shipInfo.length;
+
                 bool shipPlaced = false;
 
                 while (!shipPlaced)
                 {
                     int col = random.Next(10);
                     int row = random.Next(10);
-
-
-                    int orientation = random.Next(2);
+                    string orientation = random.Next(2) == 0 ? "horizontal" : "vertical";
 
                     bool canPlace = true;
 
                     for (int i = 0; i < shipSize; i++)
                     {
-                        int currentCol = orientation == 0 ? col + i : col;
-                        int currentRow = orientation == 1 ? row + i : row;
-
+                        int currentCol = orientation == "horizontal" ? col + i : col;
+                        int currentRow = orientation == "vertical" ? row + i : row;
 
                         if (!IsCellEmptyAndNotAdjacentToShips(board, currentRow, currentCol))
                         {
@@ -75,10 +87,13 @@ namespace WebApp.Models
 
                     if (canPlace)
                     {
+                        Ship ship = new Ship(shipType, shipSize, orientation, (row, col));
+                        ships.Add(ship);
+
                         for (int i = 0; i < shipSize; i++)
                         {
-                            int currentCol = orientation == 0 ? col + i : col;
-                            int currentRow = orientation == 1 ? row + i : row;
+                            int currentCol = orientation == "horizontal" ? col + i : col;
+                            int currentRow = orientation == "vertical" ? row + i : row;
                             board[currentRow][currentCol] = 2;
                         }
                         shipPlaced = true;
@@ -86,7 +101,7 @@ namespace WebApp.Models
                 }
             }
 
-            return board;
+            return (board, ships);
         }
 
         private bool IsCellEmptyAndNotAdjacentToShips(int[][] board, int row, int col)
@@ -125,6 +140,7 @@ namespace WebApp.Models
             const int ShipCell = 2;
             const int HitShipCell = 3;
 
+            List<Ship> targetShips = shooter == Player1 ? Ships2 : Ships1;
             int[][] targetBoard = shooter == Player1 ? Board2 : Board1;
             int cellValue = targetBoard[row][col];
 
@@ -137,6 +153,18 @@ namespace WebApp.Models
             else if (cellValue == ShipCell)
             {
                 targetBoard[row][col] = HitShipCell;
+                UpdateShipHitState(targetShips, row, col);
+                Ship ship = targetShips.FirstOrDefault(s => s.ContainsCoordinate(row, col));
+
+                if (ship.IsSunk())
+                {
+                    if (IsGameOver = targetShips.All(s => s.IsSunk()))
+                    {
+                        return MoveStates.GameOver;
+                    }
+                    return MoveStates.Sunk;
+                }
+
                 return MoveStates.Hit;
             }
 
@@ -147,9 +175,10 @@ namespace WebApp.Models
         {
             Hit,
             Miss,
+            Sunk,
+            GameOver,
             Illegal
         }
-
 
         public (bool IsCurrentPlayer, int[][] DefenseBoard, int[][] AttackBoard) GetBoardStateForPlayer(string connectionId)
         {
@@ -164,6 +193,19 @@ namespace WebApp.Models
             else
             {
                 return (false, null, null);
+            }
+        }
+
+
+        private void UpdateShipHitState(List<Ship> ships, int row, int col)
+        {
+            foreach (var ship in ships)
+            {
+                if (ship.ContainsCoordinate(row, col))
+                {
+                    ship.Hit();
+                    break;
+                }
             }
         }
 
@@ -205,37 +247,37 @@ namespace WebApp.Models
             }
         }
 
-        private bool IsBoardDestroyed(int[][] board)
+        public string GetOtherPlayerConnectionId(string currentPlayerConnectionId)
         {
-            foreach (int[] row in board)
+            if (Player1.ConnectionId == currentPlayerConnectionId)
             {
-                foreach (int cell in row)
-                {
-                    if (cell > 0)
-                    {
-                        return false;
-                    }
-                }
+                return Player2.ConnectionId;
             }
-
-            return true;
+            else if (Player2.ConnectionId == currentPlayerConnectionId)
+            {
+                return Player1.ConnectionId;
+            }
+            return null;
         }
+
 
         public string GetWinner()
         {
-            if (IsBoardDestroyed(Board1))
+            bool allShipsSunkPlayer1 = Ships1.All(ship => ship.IsSunk());
+            bool allShipsSunkPlayer2 = Ships2.All(ship => ship.IsSunk());
+
+            if (allShipsSunkPlayer1)
             {
                 return Player2.Name;
             }
-            else if (IsBoardDestroyed(Board2))
+            else if (allShipsSunkPlayer2)
             {
                 return Player1.Name;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
+
 
         public string GetPlayerName(string connectionId)
         {
@@ -315,6 +357,10 @@ namespace WebApp.Models
 
     public class Ship
     {
+        private int shipSize;
+        private int orientation;
+        private (int row, int col) value;
+
         public string Type { get; }
         public int Length { get; }
         public string Orientation { get; set; }
@@ -339,5 +385,22 @@ namespace WebApp.Models
         {
             Hits++;
         }
+
+        public bool ContainsCoordinate(int row, int col)
+        {
+            for (int i = 0; i < Length; i++)
+            {
+                int currentRow = Orientation == "vertical" ? Position.row + i : Position.row;
+                int currentCol = Orientation == "horizontal" ? Position.col + i : Position.col;
+
+                if (row == currentRow && col == currentCol)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
+
 }

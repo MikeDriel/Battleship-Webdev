@@ -34,37 +34,40 @@ namespace WebApp.Hubs
 
             if (game != null)
             {
-                // Add the player to the game
-                game.AddPlayer(playerName, Context.ConnectionId);
-
-                // Join the player to the game group
-                await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
-
-                // Get the board state for the player
-                var boardState = game.GetBoardStateForPlayer(Context.ConnectionId);
-
-                Context.Items["RoomCode"] = gameId;
-
-                int playerCount = game.PlayerCount;
-
-                // Notify all players in the game that a new player has joined
-                await Clients.Group(gameId).SendAsync("PlayerJoined", playerName, gameId, playerCount);
-
-                // Sync UI to everyone
-                await SyncGameData(gameId, game.PlayerCount);
-
-
-                if (game.PlayerCount == 2)
+                if (!game.Started)
                 {
+                    // Add the player to the game
+                    game.AddPlayer(playerName, Context.ConnectionId);
 
-                    await SendBoardState(Context.ConnectionId);
+                    // Join the player to the game group
+                    await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
 
-                    // Start the game
-                    game.StartGame();
+                    // Get the board state for the player
+                    var boardState = game.GetBoardStateForPlayer(Context.ConnectionId);
 
-                    // Notify all players in the game about the game start
-                    await Clients.Group(gameId).SendAsync("GameStarted", game.Player1.Name, game.Player2.Name);
-                    await UpdateCurrentPlayer();
+                    Context.Items["RoomCode"] = gameId;
+
+                    int playerCount = game.PlayerCount;
+
+                    // Notify all players in the game that a new player has joined
+                    await Clients.Group(gameId).SendAsync("PlayerJoined", playerName, gameId, playerCount);
+
+                    // Sync UI to everyone
+                    await SyncGameData(gameId, game.PlayerCount);
+
+
+                    if (game.PlayerCount == 2)
+                    {
+
+                        await SendBoardState(Context.ConnectionId);
+
+                        // Start the game
+                        game.StartGame();
+
+                        // Notify all players in the game about the game start
+                        await Clients.Group(gameId).SendAsync("GameStarted", game.Player1.Name, game.Player2.Name);
+                        await UpdateCurrentPlayer();
+                    }
                 }
             }
             else
@@ -106,7 +109,7 @@ namespace WebApp.Hubs
             {
                 var (isCurrentPlayer, defenseBoard, attackBoard) = game.GetBoardStateForPlayer(connectionId);
 
-                int[][] safeDefenseBoard = defenseBoard.Select(row =>row.Select(value => value == 2 ? 0 : value).ToArray()).ToArray();
+                int[][] safeDefenseBoard = defenseBoard.Select(row => row.Select(value => value == 2 ? 0 : value).ToArray()).ToArray();
                 int[][] safeAttackBoard = attackBoard.Select(row => row.Select(value => value == 2 ? 0 : value).ToArray()).ToArray();
 
                 if (game.Player1 == game.CurrentPlayer)
@@ -141,7 +144,7 @@ namespace WebApp.Hubs
                     // Ensure the player making the shot is the current player
                     if (game.CurrentPlayer.ConnectionId == Context.ConnectionId)
                     {
-                        
+
                         Player shooter = game.CurrentPlayer;
 
                         // Attempt to make a shot on the game board
@@ -150,7 +153,7 @@ namespace WebApp.Hubs
                         if (moveResult != Game.MoveStates.Illegal)
                         {
                             await SendBoardState(Context.ConnectionId);
-                           
+
 
                             if (moveResult == Game.MoveStates.Hit)
                             {
@@ -160,6 +163,17 @@ namespace WebApp.Hubs
                             game.SwitchPlayer();
                             await UpdateCurrentPlayer();
                         }
+
+                        if (moveResult == Game.MoveStates.GameOver)
+                        {
+                            await Clients.Group(gameId).SendAsync("GameOver", game.GetWinner());
+                        }
+                    }
+                    else
+                    {
+                        string otherPlayerConnectionId = game.GetOtherPlayerConnectionId(game.CurrentPlayer.ConnectionId);
+
+                        await Clients.Client(otherPlayerConnectionId).SendAsync("NotYourTurn");
                     }
                 }
                 else

@@ -17,6 +17,7 @@ connection.on("GameCreated", (gameId) => {
     document.getElementById("gameRoomCode").classList.add("visible");
 
     document.getElementById("gameRoomCode").innerHTML = `Roomcode: ${gameId}`;
+
     document.getElementById("player1name").innerHTML = document.getElementById("playerName").value;
 });
 
@@ -34,20 +35,22 @@ connection.on("UpdateBoardState", (defenseBoard, attackBoard) => {
     const player1BoardElement = document.querySelector('player1-board');
     const player2BoardElement = document.querySelector('player2-board');
 
-        player1BoardElement.updateBoard(defenseBoard);
+    player1BoardElement.updateBoard(defenseBoard);
 
-        player2BoardElement.updateBoard(attackBoard);
+    player2BoardElement.updateBoard(attackBoard);
 
 });
 
 connection.on("UpdateTurn", (player, activeboard, inactiveboard) => {
     const currentTurnName = document.getElementById("currentTurnName");
     currentTurnName.innerHTML = (`It is ${player}'s turn!`);
-    
+
     const BoardElementActive = document.querySelector(`player${activeboard}-board`);
     BoardElementActive.classList.remove("inactiveopacity");
+    BoardElementActive.classList.remove("nopointerevents");
     const BoardElementInActive = document.querySelector(`player${inactiveboard}-board`);
     BoardElementInActive.classList.add("inactiveopacity");
+    BoardElementInActive.classList.add("nopointerevents");
 });
 
 
@@ -86,14 +89,25 @@ connection.on("GameDataSynced", (player1Name, player2Name, gameId) => {
 document.getElementById("joinButton").addEventListener("click", function () {
     const playerName = document.getElementById("playerName").value;
     const roomCode = document.getElementById("roomCode").value;
-    connection.invoke("JoinGame", playerName, roomCode).catch(function (err) {
-        return console.error(err.toString());
-    });
+
+    if (playerName.length >= 2 && playerName.length <= 13) {
+        connection.invoke("JoinGame", playerName, roomCode).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+    else alert("Name is too long or is empty")
 });
 
 
 document.getElementById("createButton").addEventListener("click", function (e) {
-    connection.invoke("CreateGame", document.getElementById("playerName").value).catch(function (err) {
-        return console.error(err.toString());
-    });
+
+    const playerName = document.getElementById("playerName").value
+
+    if (playerName.length >= 2 && playerName.length <= 13) {
+        connection.invoke("CreateGame", playerName).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+
+    else alert("Name is too long or is empty")
 });

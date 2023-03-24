@@ -1,8 +1,15 @@
 ﻿/* BATTLESHIP */
 @import url('https://fonts.googleapis.com/css2?family=IM+Fell+Great+Primer&display=swap');
 
+/*.lobby {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}*/
+
 .greatFell {
-    font-family: 'IM Fell Great Primer', serif;
+    font-family: Arial;
 }
 body {
     background: #16202c;
@@ -34,6 +41,10 @@ body {
 
 .inactiveopacity {
     opacity: 0.5;
+}
+
+.nopointerevents {
+    pointer-events: none;
 }
 
 .messageArea {

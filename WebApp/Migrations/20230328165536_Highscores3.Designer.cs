@@ -12,15 +12,15 @@ using WebApp.Data;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(WebAppContext))]
-    [Migration("20230327142846_BaseMigration")]
-    partial class BaseMigration
+    [Migration("20230328165536_Highscores3")]
+    partial class Highscores3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -254,18 +254,58 @@ namespace WebApp.Migrations
                         {
                             Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0ea979ef-7860-4c36-a626-cdd930d33a7e",
+                            ConcurrencyStamp = "c0b045f9-ad8e-4bc5-96fb-60e61ae1c5b5",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPO05ihMZ4dSXMz4GSi4FW8jz+tC2Zhef8JSHXCJ9rmULNT6lgixvCAZXUxh/W6OZA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKL0DmZ9w1dnXQ72AEWSWNbZ3Q83aeqlVPq45ZdSfU/SyFcv4R7112A6C0Oe/ZkX7w==",
                             PhoneNumber = "1234567890",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "70163822-8909-4c8d-aced-bafb3e4c91a1",
+                            SecurityStamp = "a6e070ac-5259-455b-88e1-74e139129f3f",
                             TwoFactorEnabled = false,
                             UserName = "admin@gmail.com"
+                        });
+                });
+
+            modelBuilder.Entity("WebApp.Models.HighScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HighScores");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Player 1",
+                            Score = 100
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Player 2",
+                            Score = 200
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Player 3",
+                            Score = 300
                         });
                 });
 

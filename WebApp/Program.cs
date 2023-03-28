@@ -18,6 +18,11 @@ builder.Services.AddSignalR();
 //Gamemanager
 builder.Services.AddSingleton<GameManager>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+});
+
 //Recaptcha
 builder.Services.AddHttpClient<ReCaptcha>(client =>
 {
@@ -25,6 +30,9 @@ builder.Services.AddHttpClient<ReCaptcha>(client =>
 });
 
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -45,7 +53,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+	pattern: "{controller=Battleship}/{action=Index}/{id?}");
 
 app.MapHub<BattleShipHub>("/BattleShipHub");
 

@@ -2,15 +2,21 @@
 using SendGrid.Helpers.Mail;
 using SendGrid;
 using WebApp.Models;
+using Microsoft.EntityFrameworkCore;
+using WebApp.Data;
 
 namespace WebApp.Controllers
 {
 	public class ContactController : Controller
 	{
+        private readonly IConfiguration _configuration;
+        private readonly WebAppContext _dbContext;
         private readonly ReCaptcha _captcha;
 
-        public ContactController(ReCaptcha captcha)
+        public ContactController(ReCaptcha captcha, IConfiguration configuration, WebAppContext dbContext)
         {
+			_configuration = configuration;
+			_dbContext = dbContext;
             _captcha = captcha;
         }
 
@@ -35,7 +41,16 @@ namespace WebApp.Controllers
 				{
 					//Send mail
 					await SendEmail(email.Name, email.EmailAddress, email.EmailBody);
-					return View("MailVerstuurd");
+
+                    // Get the configuration from the appsettings.json file
+                    var connectionstring = _configuration.GetConnectionString("SHContextConnection");
+                    // Set the connectionstring to the database, and save the email to the database
+                    _dbContext.Database.GetDbConnection().ConnectionString = connectionstring;
+                    _dbContext.Emails.Add(email);
+                    await _dbContext.SaveChangesAsync();
+
+
+                    return View("MailVerstuurd");
 				}
 			}
 			return Index();

@@ -24,6 +24,7 @@ public class WebAppContext : IdentityDbContext<WebAppUser>
     }
 
     public DbSet<HighScore> HighScores { get; set; }
+    public DbSet<Email> Emails { get; set; }
 
     private void SeedHighScores(ModelBuilder builder)
     {

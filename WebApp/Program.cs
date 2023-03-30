@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.CodeAnalysis.Differencing;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("WebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'WebAppContextConnection' not found.");
+//var connectionString = builder.Configuration.GetConnectionString("WebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'WebAppContextConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("ProductionConnection") ?? throw new InvalidOperationException("Connection string 'ProductionConnection' not found.");
 
 builder.Services.AddDbContext<WebAppContext>(options => options.UseSqlServer(connectionString));
 
